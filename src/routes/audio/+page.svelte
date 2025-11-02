@@ -35,11 +35,7 @@
 				<p>Each message is grounded in Scripture and shares practical wisdom from years of ministry experience.</p>
 			</div>
 			
-			<div class="section">
-				<h2>Bible Studies</h2>
-				<p>Our Tuesday night Bible Study sessions are available as podcast episodes. Currently, we're exploring the gospel of Luke, with Terry teaching on chapter 11 "Teach us to pray."</p>
-				<p>These in-depth studies provide biblical insights and practical application for daily Christian living.</p>
-			</div>
+	
 			
 			<div class="section highlight">
 				<h2>📻 Where to Listen</h2>
