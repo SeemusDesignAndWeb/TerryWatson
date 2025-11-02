@@ -87,6 +87,17 @@
 		font-weight: 500;
 	}
 
+	.intro :global(a) {
+		color: var(--primary-color);
+		text-decoration: underline;
+		font-weight: 600;
+		transition: color 0.3s;
+	}
+
+	.intro :global(a:hover) {
+		color: var(--grass-green);
+	}
+
 	.section {
 		margin-bottom: 3rem;
 		padding-bottom: 3rem;
@@ -118,14 +129,14 @@
 		font-size: 1.05rem;
 	}
 
-	.section a {
+	.section :global(a) {
 		color: var(--primary-color);
 		text-decoration: underline;
 		font-weight: 600;
 		transition: color 0.3s;
 	}
 
-	.section a:hover {
+	.section :global(a:hover) {
 		color: var(--grass-green);
 	}
 

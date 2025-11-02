@@ -96,7 +96,7 @@
 				</div>
 			{/if}
 
-			<form onsubmit|preventDefault={handleSave}>
+			<form onsubmit={(e) => { e.preventDefault(); handleSave(); }}>
 				<div class="form-section">
 					<label for="intro">Introduction Text</label>
 					<textarea
