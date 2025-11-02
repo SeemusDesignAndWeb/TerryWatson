@@ -38,7 +38,7 @@
 				{#if latestExcerpt}
 					<div class="hero-excerpt">
 						<p class="hero-excerpt-text">{latestExcerpt}</p>
-						<a href="/news" class="hero-excerpt-link">Read full update →</a>
+						<a href="/news" class="hero-excerpt-link">Read latest update →</a>
 					</div>
 				{:else}
 					<p class="hero-subtitle">News updates, audio podcast, and the book from Terry Watson.</p>

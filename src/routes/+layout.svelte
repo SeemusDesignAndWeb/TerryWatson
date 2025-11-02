@@ -235,8 +235,8 @@
 	}
 
 	.footer {
-		background: var(--pacific-blue);
-		color: rgba(255, 255, 255, 0.8);
+		background: #8B6914;
+		color: rgba(255, 255, 255, 0.9);
 		padding: 2rem 2rem;
 		margin-top: 4rem;
 	}
