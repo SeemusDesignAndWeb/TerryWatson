@@ -50,7 +50,7 @@
 			</div>
 		</div>
 		<div class="hero-image">
-			<img src="https://www.terryandfran.info/company/terryandfran/images/WN020118009_1024.jpg" alt="Terry Watson" />
+			<img src="/images/terryandfranwatson.png" alt="Terry & Fran Watson" />
 		</div>
 	</div>
 </section>
