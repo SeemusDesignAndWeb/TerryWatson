@@ -263,7 +263,7 @@
 			flex-direction: column;
 			width: 100%;
 			margin-top: 1rem;
-			gap: 0.5rem;
+			gap: 0.75rem;
 			background: rgba(255, 255, 255, 0.15);
 			padding: 1rem;
 			border-radius: 16px;
@@ -275,11 +275,21 @@
 			display: flex;
 		}
 
+		.nav-menu li {
+			width: 100%;
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
 		.nav-link {
 			width: 100%;
-			padding: 1rem;
+			padding: 0.875rem 1rem;
 			text-align: center;
 			border-radius: 12px;
+			box-sizing: border-box;
+			margin: 0;
+			display: block;
 		}
 
 		.brand-link {
