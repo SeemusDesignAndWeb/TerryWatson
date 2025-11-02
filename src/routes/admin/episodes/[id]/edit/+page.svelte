@@ -17,15 +17,74 @@
 
 	let saving = $state(false);
 	let error = $state('');
+	let uploading = $state(false);
+	let uploadProgress = $state('');
+	let useUpload = $state(false);
+	let audioFile: File | null = $state(null);
 
 	if (!data.episode) {
 		goto('/admin');
+	}
+
+	async function handleFileUpload(file: File) {
+		if (!file) return;
+		
+		uploading = true;
+		uploadProgress = 'Uploading to Cloudinary...';
+		error = '';
+
+		try {
+			const formData = new FormData();
+			formData.append('audio', file);
+
+			const response = await fetch('/admin/api/episodes/upload', {
+				method: 'POST',
+				body: formData
+			});
+
+			const data = await response.json();
+
+			if (response.ok && data.url) {
+				episode.audioUrl = data.url;
+				uploadProgress = 'Upload complete!';
+				audioFile = null;
+			} else {
+				error = data.error || 'Upload failed';
+			}
+		} catch (err) {
+			error = 'Failed to upload audio file';
+		} finally {
+			uploading = false;
+			setTimeout(() => {
+				uploadProgress = '';
+			}, 2000);
+		}
+	}
+
+	function handleFileChange(e: Event) {
+		const target = e.target as HTMLInputElement;
+		const file = target.files?.[0];
+		if (file) {
+			if (file.type !== 'audio/mpeg' && file.type !== 'audio/mp3' && !file.name.endsWith('.mp3')) {
+				error = 'Please upload an MP3 file';
+				return;
+			}
+			audioFile = file;
+			handleFileUpload(file);
+		}
 	}
 
 	async function handleSubmit(e: Event) {
 		e.preventDefault();
 		saving = true;
 		error = '';
+
+		// Validate that we have an audio URL
+		if (!episode.audioUrl.trim()) {
+			error = 'Please provide an audio URL or upload a file';
+			saving = false;
+			return;
+		}
 
 		try {
 			const episodes = await fetch('/admin/api/episodes').then(r => r.json());
@@ -93,14 +152,51 @@
 			</div>
 
 			<div class="form-group">
-				<label for="audioUrl">Audio URL *</label>
-				<input
-					type="url"
-					id="audioUrl"
-					bind:value={episode.audioUrl}
-					required
-					placeholder="https://..."
-				/>
+				<label>Audio Source *</label>
+				<div class="audio-source-toggle">
+					<button
+						type="button"
+						class="toggle-btn"
+						class:active={!useUpload}
+						onclick={() => { useUpload = false; }}
+					>
+						Enter URL
+					</button>
+					<button
+						type="button"
+						class="toggle-btn"
+						class:active={useUpload}
+						onclick={() => { useUpload = true; }}
+					>
+						Upload MP3
+					</button>
+				</div>
+
+				{#if useUpload}
+					<div class="upload-section">
+						<input
+							type="file"
+							id="audioFile"
+							accept="audio/mpeg,audio/mp3,.mp3"
+							onchange={handleFileChange}
+							disabled={uploading}
+						/>
+						{#if uploading}
+							<p class="upload-status">{uploadProgress}</p>
+						{/if}
+						{#if episode.audioUrl && !uploading && useUpload}
+							<p class="upload-success">✓ File uploaded: {episode.audioUrl.substring(0, 50)}...</p>
+						{/if}
+					</div>
+				{:else}
+					<input
+						type="url"
+						id="audioUrl"
+						bind:value={episode.audioUrl}
+						required={!useUpload}
+						placeholder="https://..."
+					/>
+				{/if}
 			</div>
 
 			<div class="form-group">
@@ -196,6 +292,63 @@
 	textarea {
 		resize: vertical;
 		min-height: 100px;
+	}
+
+	.audio-source-toggle {
+		display: flex;
+		gap: 0.5rem;
+		margin-bottom: 1rem;
+	}
+
+	.toggle-btn {
+		flex: 1;
+		padding: 0.75rem 1rem;
+		border: 2px solid var(--border-color);
+		background: white;
+		border-radius: 8px;
+		cursor: pointer;
+		font-weight: 600;
+		transition: all 0.3s;
+		color: var(--text-color);
+	}
+
+	.toggle-btn.active {
+		background: var(--primary-color);
+		color: white;
+		border-color: var(--primary-color);
+	}
+
+	.toggle-btn:hover:not(.active) {
+		border-color: var(--yarrow-gold);
+	}
+
+	.upload-section {
+		margin-top: 0.5rem;
+	}
+
+	.upload-section input[type="file"] {
+		width: 100%;
+		padding: 0.875rem 1rem;
+		border: 2px solid var(--border-color);
+		border-radius: 8px;
+		font-size: 1rem;
+		cursor: pointer;
+	}
+
+	.upload-status {
+		margin-top: 0.5rem;
+		color: var(--primary-color);
+		font-weight: 600;
+		font-size: 0.9rem;
+	}
+
+	.upload-success {
+		margin-top: 0.5rem;
+		color: #155724;
+		background: #d4edda;
+		padding: 0.5rem;
+		border-radius: 4px;
+		font-size: 0.875rem;
 	}
 
 	.form-actions {
