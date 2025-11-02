@@ -1,3 +1,9 @@
+<script lang="ts">
+	import type { PageData } from './$types';
+
+	let { data } = $props<{ data: PageData }>();
+</script>
+
 <svelte:head>
 	<title>The Book - Terry Watson</title>
 </svelte:head>
@@ -13,31 +19,36 @@
 	<div class="container">
 		<div class="content-card">
 			<div class="intro">
-				<p class="large-text">Discover wisdom and practical insights from Terry Watson's extensive experience in pastoral ministry and itinerant preaching.</p>
+				<p class="large-text">{@html data.bookContent.intro}</p>
 			</div>
 			
 			<div class="section">
 				<h2>About the Book</h2>
-				<p>This comprehensive resource draws from decades of ministry work, sharing valuable lessons learned from pastoral ministry, itinerant preaching, and mission work around the world. The book provides practical guidance for ministers, church leaders, and anyone involved in ministry work.</p>
-				<p>Based on real experiences and biblical foundations, this book offers timeless wisdom for effective ministry in today's world.</p>
+				{#each data.bookContent.about.split('\n\n') as paragraph}
+					{#if paragraph.trim()}
+						<p>{@html paragraph.trim().replace(/\n/g, '<br>')}</p>
+					{/if}
+				{/each}
 			</div>
 			
 			<div class="section highlight">
 				<h2>📖 Key Topics</h2>
 				<ul class="topic-list">
-					<li>Pastoral care and leadership</li>
-					<li>Itinerant preaching ministry</li>
-					<li>Building and nurturing Christian communities</li>
-					<li>Mission work and cross-cultural ministry</li>
-					<li>Teaching and discipleship</li>
-					<li>Practical ministry wisdom</li>
+					{#each data.bookContent.topics as topic}
+						{#if topic.trim()}
+							<li>{topic}</li>
+						{/if}
+					{/each}
 				</ul>
 			</div>
 			
 			<div class="section">
 				<h2>Availability</h2>
-				<p>We're currently working on making this valuable resource available. Please check back for updates on publication date and purchasing information.</p>
-				<p>For updates on the book's release, please visit our <a href="/news">Updates page</a> or subscribe to stay informed.</p>
+				{#each data.bookContent.availability.split('\n\n') as paragraph}
+					{#if paragraph.trim()}
+						<p>{@html paragraph.trim().replace(/\n/g, '<br>')}</p>
+					{/if}
+				{/each}
 			</div>
 			
 			<div class="cta-section">

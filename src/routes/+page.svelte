@@ -2,6 +2,27 @@
 	import type { PageData } from './$types';
 
 	let { data } = $props<{ data: PageData }>();
+
+	function getExcerpt(content: string, maxLength: number = 300): string {
+		if (!content) return '';
+		
+		// Strip HTML tags
+		const text = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+		
+		// Get first sentence or paragraph
+		const firstParagraph = text.split('\n\n')[0] || text;
+		
+		// If it's longer than maxLength, truncate at word boundary
+		if (firstParagraph.length > maxLength) {
+			const truncated = firstParagraph.substring(0, maxLength);
+			const lastSpace = truncated.lastIndexOf(' ');
+			return lastSpace > 0 ? truncated.substring(0, lastSpace) + '...' : truncated + '...';
+		}
+		
+		return firstParagraph;
+	}
+
+	let latestExcerpt = $derived(data.latestUpdate ? getExcerpt(data.latestUpdate.content) : '');
 </script>
 
 <svelte:head>
@@ -14,7 +35,14 @@
 		<div class="hero-content">
 			<div class="hero-text">
 				<h1 class="hero-title">Welcome</h1>
-				<p class="hero-subtitle">News updates, audio podcast, and the book from Terry Watson.</p>
+				{#if latestExcerpt}
+					<div class="hero-excerpt">
+						<p class="hero-excerpt-text">{latestExcerpt}</p>
+						<a href="/news" class="hero-excerpt-link">Read full update →</a>
+					</div>
+				{:else}
+					<p class="hero-subtitle">News updates, audio podcast, and the book from Terry Watson.</p>
+				{/if}
 				<div class="hero-buttons">
 					<a href="/audio" class="btn">Listen to Podcast</a>
 					<a href="/book" class="btn btn-secondary">Read the Book</a>
@@ -31,64 +59,25 @@
 <section class="features">
 	<div class="container">
 		<div class="features-grid">
-			<div class="feature-card">
+			<a href="/audio" class="feature-card">
 				<div class="feature-icon">🎙️</div>
 				<h3>Audio Podcast</h3>
 				<p>Listen to weekly messages, Bible studies, and inspiring stories from Terry's preaching ministry.</p>
-				<a href="/audio" class="feature-link">Explore Podcast →</a>
-			</div>
-			<div class="feature-card">
+				<span class="feature-link">Explore Podcast →</span>
+			</a>
+			<a href="/book" class="feature-card">
 				<div class="feature-icon">📖</div>
 				<h3>The Book</h3>
 				<p>Discover insights from decades of pastoral ministry and itinerant preaching experience.</p>
-				<a href="/book" class="feature-link">Learn More →</a>
-			</div>
-			<div class="feature-card">
+				<span class="feature-link">Learn More →</span>
+			</a>
+			<a href="/news" class="feature-card">
 				<div class="feature-icon">✍️</div>
 				<h3>Latest Updates</h3>
 				<p>Stay connected with ministry updates, travels, and stories from the field.</p>
-				<a href="/news" class="feature-link">Read Updates →</a>
-			</div>
+				<span class="feature-link">Read Updates →</span>
+			</a>
 		</div>
-	</div>
-</section>
-
-<!-- Latest Update Section -->
-<section class="latest-update-section">
-	<div class="container">
-		{#if data.latestUpdate}
-			<div class="update-container">
-				<div class="update-header">
-					<h2>Latest Ministry Update</h2>
-					<span class="update-date">{data.latestUpdate.date}</span>
-				</div>
-				
-				<div class="update-content">
-					{#each data.latestUpdate.content.split('\n\n') as paragraph}
-						{#if paragraph.trim()}
-							<p>{@html paragraph.trim().replace(/\n/g, '<br>')}</p>
-						{/if}
-					{/each}
-					
-					<div class="update-footer">
-						<a href="/news" class="btn">Read All Updates</a>
-					</div>
-				</div>
-			</div>
-		{:else}
-			<div class="update-container">
-				<div class="update-header">
-					<h2>Latest Ministry Update</h2>
-				</div>
-				
-				<div class="update-content">
-					<p>No updates available at this time. Please check back soon!</p>
-					<div class="update-footer">
-						<a href="/news" class="btn">View All Updates</a>
-					</div>
-				</div>
-			</div>
-		{/if}
 	</div>
 </section>
 
@@ -96,7 +85,7 @@
 	.hero {
 		position: relative;
 		background: linear-gradient(135deg, #0a1628 0%, #1a2d42 50%, #0f2143 100%);
-		padding: calc(8rem + 100px) 2rem 6rem 2rem;
+		padding: calc(5rem + 100px) 2rem 6rem 2rem;
 		overflow: hidden;
 		min-height: 70vh;
 		display: flex;
@@ -139,6 +128,37 @@
 		color: rgba(255, 255, 255, 0.9);
 		line-height: 1.6;
 		font-weight: 400;
+	}
+
+	.hero-excerpt {
+		margin-bottom: 2.5rem;
+		padding: 1.5rem;
+		background: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(10px);
+		border-radius: 12px;
+		border-left: 4px solid var(--yarrow-gold);
+	}
+
+	.hero-excerpt-text {
+		font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+		color: rgba(255, 255, 255, 0.95);
+		line-height: 1.7;
+		margin-bottom: 1rem;
+		font-style: italic;
+	}
+
+	.hero-excerpt-link {
+		color: var(--yarrow-gold);
+		font-weight: 600;
+		font-size: 0.95rem;
+		text-decoration: none;
+		transition: all 0.3s ease;
+		display: inline-block;
+	}
+
+	.hero-excerpt-link:hover {
+		color: white;
+		transform: translateX(5px);
 	}
 
 	.hero-buttons {
@@ -214,6 +234,9 @@
 		text-align: center;
 		transition: all 0.3s ease;
 		border: 2px solid transparent;
+		text-decoration: none;
+		color: inherit;
+		display: block;
 	}
 
 	.feature-card:hover {
@@ -245,96 +268,12 @@
 		font-weight: 600;
 		font-size: 1rem;
 		transition: all 0.3s ease;
+		display: inline-block;
 	}
 
-	.feature-link:hover {
+	.feature-card:hover .feature-link {
 		color: var(--accent-dark);
 		transform: translateX(5px);
-	}
-
-	.latest-update-section {
-		padding: 5rem 2rem;
-		background: var(--bg-light);
-	}
-
-	.update-container {
-		max-width: 900px;
-		margin: 0 auto;
-		background: white;
-		border-radius: 20px;
-		box-shadow: var(--shadow-lg);
-		overflow: hidden;
-	}
-
-	.update-header {
-		background: linear-gradient(135deg, var(--cerulean-blue) 0%, var(--pacific-blue) 50%, var(--grass-green) 100%);
-		color: white;
-		padding: 2rem;
-		text-align: center;
-	}
-
-	.update-header h2 {
-		margin: 0 0 0.5rem 0;
-		color: white;
-		font-size: 2rem;
-	}
-
-	.update-date {
-		display: block;
-		font-size: 1rem;
-		opacity: 0.95;
-		font-weight: 500;
-	}
-
-	.update-content {
-		padding: 3rem 2.5rem;
-	}
-
-	.update-content p {
-		line-height: 1.9;
-		margin-bottom: 1.5rem;
-		font-size: 1.05rem;
-	}
-
-/*	.signature {
-		margin-top: 2rem;
-		font-style: italic;
-		color: var(--text-color);
-	}
-*/
-	.update-footer {
-		margin-top: 3rem;
-		text-align: center;
-		padding: 2.5rem;
-		border-top: 2px solid var(--border-color);
-		background: linear-gradient(135deg, rgba(139, 98, 18, 0.1) 0%, rgba(139, 98, 18, 0.15) 50%, rgba(139, 98, 18, 0.1) 100%);
-		border-radius: 16px;
-		margin-left: -1rem;
-		margin-right: -1rem;
-		position: relative;
-	}
-
-	.update-footer .btn {
-		background: var(--yarrow-gold);
-		color: white;
-		font-weight: 700;
-		padding: 1.25rem 3rem;
-		font-size: 1.25rem;
-		box-shadow: 0 6px 20px rgba(139, 98, 18, 0.4);
-		border-radius: 50px;
-		display: inline-block;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		transition: all 0.3s ease;
-		position: relative;
-		z-index: 1;
-	}
-
-	.update-footer .btn:hover {
-		background: var(--accent-dark);
-		transform: translateY(-4px) scale(1.05);
-		box-shadow: 0 8px 30px rgba(139, 98, 18, 0.5);
-		color: white;
 	}
 
 	@media (max-width: 968px) {
@@ -362,7 +301,7 @@
 
 	@media (max-width: 768px) {
 		.hero {
-			padding: calc(4rem + 100px) 1.5rem 4rem 1.5rem;
+			padding: calc(3rem + 100px) 1.5rem 4rem 1.5rem;
 			min-height: auto;
 		}
 
@@ -390,18 +329,6 @@
 		.features-grid {
 			grid-template-columns: 1fr;
 			gap: 2rem;
-		}
-
-		.latest-update-section {
-			padding: 3rem 1.5rem;
-		}
-
-		.update-content {
-			padding: 2rem 1.5rem;
-		}
-
-		.update-header {
-			padding: 1.5rem;
 		}
 	}
 </style>

@@ -63,6 +63,14 @@
 					<p class="card-description">Edit the Ameva Project page content, sections, and introduction text.</p>
 					<span class="card-link">Edit Page →</span>
 				</a>
+
+				<a href="/admin/book" class="dashboard-card">
+					<div class="card-icon">📖</div>
+					<h2>Book Page</h2>
+					<p class="card-count">Content Editor</p>
+					<p class="card-description">Edit the book page content, introduction, topics, and availability information.</p>
+					<span class="card-link">Edit Page →</span>
+				</a>
 			</div>
 		</div>
 	{/if}

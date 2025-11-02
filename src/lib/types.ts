@@ -22,3 +22,10 @@ export interface AmevaContent {
 	}>;
 }
 
+export interface BookContent {
+	intro: string;
+	about: string;
+	topics: string[];
+	availability: string;
+}
+

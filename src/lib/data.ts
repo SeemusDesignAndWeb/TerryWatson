@@ -1,10 +1,10 @@
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
-import type { Episode, NewsUpdate, AmevaContent } from './types';
+import type { Episode, NewsUpdate, AmevaContent, BookContent } from './types';
 
 // Re-export types for convenience (server-side only)
-export type { Episode, NewsUpdate, AmevaContent };
+export type { Episode, NewsUpdate, AmevaContent, BookContent };
 
 // Get the directory of the data files - works in both dev and production
 function getDataDir() {
@@ -122,6 +122,40 @@ export function saveAmevaContent(content: AmevaContent): void {
 		writeFileSync(filePath, JSON.stringify(content, null, 2), 'utf-8');
 	} catch (error) {
 		console.error('Error saving Ameva content:', error);
+		throw error;
+	}
+}
+
+export function getBookContent(): BookContent {
+	try {
+		const filePath = join(dataDir, 'book.json');
+		const data = readFileSync(filePath, 'utf-8');
+		return JSON.parse(data);
+	} catch (error) {
+		console.error('Error reading book content:', error);
+		// Return default content if file doesn't exist
+		return {
+			intro: 'Discover wisdom and practical insights from Terry Watson\'s extensive experience in pastoral ministry and itinerant preaching.',
+			about: 'This comprehensive resource draws from decades of ministry work, sharing valuable lessons learned from pastoral ministry, itinerant preaching, and mission work around the world. The book provides practical guidance for ministers, church leaders, and anyone involved in ministry work.\n\nBased on real experiences and biblical foundations, this book offers timeless wisdom for effective ministry in today\'s world.',
+			topics: [
+				'Pastoral care and leadership',
+				'Itinerant preaching ministry',
+				'Building and nurturing Christian communities',
+				'Mission work and cross-cultural ministry',
+				'Teaching and discipleship',
+				'Practical ministry wisdom'
+			],
+			availability: 'We\'re currently working on making this valuable resource available. Please check back for updates on publication date and purchasing information.\n\nFor updates on the book\'s release, please visit our Updates page or subscribe to stay informed.'
+		};
+	}
+}
+
+export function saveBookContent(content: BookContent): void {
+	try {
+		const filePath = join(dataDir, 'book.json');
+		writeFileSync(filePath, JSON.stringify(content, null, 2), 'utf-8');
+	} catch (error) {
+		console.error('Error saving book content:', error);
 		throw error;
 	}
 }

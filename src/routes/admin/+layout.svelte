@@ -12,7 +12,8 @@
 		{ href: '/admin', label: 'Dashboard' },
 		{ href: '/admin/episodes', label: 'Podcast Episodes' },
 		{ href: '/admin/news', label: 'News Updates' },
-		{ href: '/admin/ameva', label: 'Ameva Page' }
+		{ href: '/admin/ameva', label: 'Ameva Page' },
+		{ href: '/admin/book', label: 'Book Page' }
 	];
 
 	function toggleMenu() {
