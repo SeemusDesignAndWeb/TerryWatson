@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import type { AmevaContent } from '$lib/types';
+	import RichTextEditor from '$lib/RichTextEditor.svelte';
 
 	let content = $state<AmevaContent>({
 		intro: '',
@@ -99,14 +100,8 @@
 			<form onsubmit={(e) => { e.preventDefault(); handleSave(); }}>
 				<div class="form-section">
 					<label for="intro">Introduction Text</label>
-					<textarea
-						id="intro"
-						bind:value={content.intro}
-						rows="4"
-						placeholder="Enter introduction text (HTML allowed)"
-						required
-					></textarea>
-					<p class="help-text">You can use HTML tags like &lt;a&gt; for links</p>
+					<RichTextEditor bind:value={content.intro} placeholder="Enter introduction text" />
+					<p class="help-text">Use the toolbar to format text: <strong>Bold</strong>, <em>Italic</em>, and add Links.</p>
 				</div>
 
 				<div class="form-section">
@@ -152,13 +147,7 @@
 
 							<div class="form-group">
 								<label for="section-content-{index}">Section Content</label>
-								<textarea
-									id="section-content-{index}"
-									bind:value={section.content}
-									rows="6"
-									placeholder="Section content (HTML allowed, use \n for new paragraphs)"
-									required
-								></textarea>
+								<RichTextEditor bind:value={section.content} placeholder="Section content" />
 							</div>
 
 							<div class="form-group checkbox-group">

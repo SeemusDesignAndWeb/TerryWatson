@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import type { NewsUpdate } from '$lib/types';
+	import RichTextEditor from '$lib/RichTextEditor.svelte';
 
 	let update: NewsUpdate = $state({
 		title: '',
@@ -79,14 +80,8 @@
 
 			<div class="form-group">
 				<label for="content">Content *</label>
-				<textarea
-					id="content"
-					bind:value={update.content}
-					required
-					rows="15"
-					placeholder="Update content..."
-				></textarea>
-				<small class="help-text">Use double line breaks (Enter twice) to create new paragraphs.</small>
+				<RichTextEditor bind:value={update.content} placeholder="Update content..." />
+				<small class="help-text">Use the toolbar to format text: <strong>Bold</strong>, <em>Italic</em>, and add Links.</small>
 			</div>
 
 			<div class="form-actions">

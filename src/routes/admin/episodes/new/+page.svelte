@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import type { Episode } from '$lib/types';
+	import RichTextEditor from '$lib/RichTextEditor.svelte';
 
 	let episode: Episode = $state({
 		title: '',
@@ -80,12 +81,7 @@
 
 			<div class="form-group">
 				<label for="description">Description</label>
-				<textarea
-					id="description"
-					bind:value={episode.description}
-					rows="4"
-					placeholder="Episode description"
-				></textarea>
+				<RichTextEditor bind:value={episode.description} placeholder="Episode description" />
 			</div>
 
 			<div class="form-group">
