@@ -55,7 +55,7 @@
 				<p>Interested in learning more?</p>
 				<div class="cta-buttons">
 					<a href="/news" class="btn">Stay Updated</a>
-					<a href="/audio" class="btn btn-secondary">Listen to Podcast</a>
+					<a href="/audio" class="btn btn-secondary">Listen to Audio</a>
 				</div>
 			</div>
 		</div>

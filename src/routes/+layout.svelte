@@ -12,7 +12,7 @@
 	const navItems = [
 		{ href: '/', label: 'Home' },
 		{ href: '/news', label: 'Updates' },
-		{ href: '/audio', label: 'Podcast' },
+		{ href: '/audio', label: 'Audio' },
 		{ href: '/book', label: 'Book' },
 		{ href: '/ameva', label: 'Ameva' },
 		{ href: '/stories', label: 'Stories' }
@@ -38,7 +38,7 @@
 
 <svelte:head>
 	<title>Terry Watson - News</title>
-	<meta name="description" content="Terry Watson's itinerant preaching ministry with updates, podcast, book, and ministry resources" />
+	<meta name="description" content="Terry Watson's itinerant preaching ministry with updates, audio, book, and ministry resources" />
 </svelte:head>
 
 <div class="app">

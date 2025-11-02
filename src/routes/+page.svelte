@@ -41,10 +41,10 @@
 						<a href="/news" class="hero-excerpt-link">Read latest update →</a>
 					</div>
 				{:else}
-					<p class="hero-subtitle">News updates, audio podcast, and the book from Terry Watson.</p>
+					<p class="hero-subtitle">News updates, audio, and the book from Terry Watson.</p>
 				{/if}
 				<div class="hero-buttons">
-					<a href="/audio" class="btn">Listen to Podcast</a>
+					<a href="/audio" class="btn">Listen to Audio</a>
 					<a href="/book" class="btn btn-secondary">Read the Book</a>
 				</div>
 			</div>
@@ -61,9 +61,9 @@
 		<div class="features-grid">
 			<a href="/audio" class="feature-card">
 				<div class="feature-icon">🎙️</div>
-				<h3>Audio Podcast</h3>
+				<h3>Audio</h3>
 				<p>Listen to weekly messages, Bible studies, and inspiring stories from Terry's preaching ministry.</p>
-				<span class="feature-link">Explore Podcast →</span>
+				<span class="feature-link">Explore Audio →</span>
 			</a>
 			<a href="/book" class="feature-card">
 				<div class="feature-icon">📖</div>

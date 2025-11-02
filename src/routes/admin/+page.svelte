@@ -42,9 +42,9 @@
 			<div class="dashboard-grid">
 				<a href="/admin/episodes" class="dashboard-card">
 					<div class="card-icon">🎙️</div>
-					<h2>Podcast Episodes</h2>
+					<h2>Audio Episodes</h2>
 					<p class="card-count">{episodesCount} episode{episodesCount !== 1 ? 's' : ''}</p>
-					<p class="card-description">Manage podcast episodes, add new content, and edit existing episodes.</p>
+					<p class="card-description">Manage audio episodes, add new content, and edit existing episodes.</p>
 					<span class="card-link">View Episodes →</span>
 				</a>
 

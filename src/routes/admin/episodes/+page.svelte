@@ -23,12 +23,12 @@
 </script>
 
 <svelte:head>
-	<title>Podcast Episodes - Admin - Terry Watson</title>
+	<title>Audio Episodes - Admin - Terry Watson</title>
 </svelte:head>
 
 <div class="admin-container">
 	<header class="admin-header">
-		<h1>Podcast Episodes</h1>
+		<h1>Audio Episodes</h1>
 		<a href="/admin/episodes/new" class="btn">Add New Episode</a>
 	</header>
 

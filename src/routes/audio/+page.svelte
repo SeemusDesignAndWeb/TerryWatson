@@ -6,12 +6,12 @@
 </script>
 
 <svelte:head>
-	<title>Podcast - Terry Watson</title>
+	<title>Audio - Terry Watson</title>
 </svelte:head>
 
 <section class="page-hero">
 	<div class="container">
-		<h1>🎙️ Podcast</h1>
+		<h1>🎙️ Audio</h1>
 		<p class="subtitle">Sermons and talks from Terry Watson</p>
 	</div>
 </section>
@@ -20,7 +20,7 @@
 	<div class="container">
 		<div class="content-card">
 			<div class="intro">
-				<p class="large-text">Listen to Terry Watson's weekly podcast featuring messages from his itinerant preaching ministry, Bible studies, and inspiring testimonies from decades of ministry work.</p>
+				<p class="large-text">Listen to Terry Watson's weekly audio featuring messages from his itinerant preaching ministry, Bible studies, and inspiring testimonies from decades of ministry work.</p>
 			</div>
 
 			<div class="section">
