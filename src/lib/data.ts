@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import type { Episode, NewsUpdate, AmevaContent } from './types';
@@ -6,13 +6,34 @@ import type { Episode, NewsUpdate, AmevaContent } from './types';
 // Re-export types for convenience (server-side only)
 export type { Episode, NewsUpdate, AmevaContent };
 
-// Get the directory of the current module - works for both ESM and when bundled
+// Get the directory of the data files - works in both dev and production
 function getDataDir() {
-	// In SvelteKit/Vite, import.meta.url is available
-	const __filename = fileURLToPath(import.meta.url);
-	const __dirname = join(__filename, '..');
-	const dataDir = join(__dirname, 'data');
-	return dataDir;
+	// Try to find data directory relative to the project root
+	const cwd = process.cwd();
+	
+	// Paths to check in order of preference
+	const possiblePaths = [
+		join(cwd, 'src', 'lib', 'data'), // Development - source files
+		join(cwd, '.svelte-kit', 'output', 'lib', 'data'), // SvelteKit build output
+		join(cwd, 'build', 'lib', 'data'), // Production build (if copied)
+		join(cwd, 'lib', 'data'), // Alternative production path
+		// Fallback: try relative to this file location
+		join(fileURLToPath(import.meta.url), '..', 'data').replace('/build/', '/src/')
+	];
+	
+	// Use the first path that exists
+	for (const path of possiblePaths) {
+		try {
+			if (existsSync(path)) {
+				return path;
+			}
+		} catch {
+			// Continue to next path
+		}
+	}
+	
+	// Default to development path (will work if files exist, or will return empty arrays)
+	return possiblePaths[0];
 }
 
 const dataDir = getDataDir();
