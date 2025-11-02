@@ -1,65 +1,99 @@
 <script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
+	import { Editor } from '@tiptap/core';
+	import StarterKit from '@tiptap/starter-kit';
+	import Link from '@tiptap/extension-link';
+
 	let { value = $bindable(''), placeholder = '' } = $props();
 
 	let editorElement: HTMLDivElement;
-	let isFocused = $state(false);
-	let isUpdating = $state(false);
+	let editor: Editor | null = null;
 
-	$effect(() => {
-		if (editorElement && !isUpdating && editorElement.innerHTML !== value) {
-			editorElement.innerHTML = value || '';
+	onMount(() => {
+		if (!editorElement) return;
+
+		editor = new Editor({
+			element: editorElement,
+			extensions: [
+				StarterKit.configure({
+					heading: false,
+					codeBlock: false,
+					blockquote: false,
+					horizontalRule: false,
+					bulletList: false,
+					orderedList: false,
+					code: false
+				}),
+				Link.configure({
+					openOnClick: false,
+					HTMLAttributes: {
+						class: 'editor-link'
+					}
+				})
+			],
+			content: value || '',
+			editorProps: {
+				attributes: {
+					class: 'tiptap-editor',
+					'data-placeholder': placeholder
+				}
+			},
+			onUpdate: ({ editor }) => {
+				const html = editor.getHTML();
+				if (html !== value) {
+					value = html;
+				}
+			}
+		});
+
+		// Watch for external value changes
+		const stopWatching = () => {
+			if (editor && value !== undefined && editor.getHTML() !== value) {
+				editor.commands.setContent(value || '');
+			}
+		};
+
+		return stopWatching;
+	});
+
+	onDestroy(() => {
+		if (editor) {
+			editor.destroy();
 		}
 	});
 
-	function execCommand(command: string, value?: string) {
-		document.execCommand(command, false, value);
-		editorElement.focus();
-		updateValue();
+	function setBold() {
+		editor?.chain().focus().toggleBold().run();
 	}
 
-	function insertLink() {
-		const url = prompt('Enter URL:');
+	function setItalic() {
+		editor?.chain().focus().toggleItalic().run();
+	}
+
+	function setLink() {
+		const previousUrl = editor?.getAttributes('link').href;
+		const url = window.prompt('Enter URL:', previousUrl || '');
 		if (url) {
-			execCommand('createLink', url);
+			editor?.chain().focus().setLink({ href: url }).run();
 		}
 	}
 
-	function removeFormat() {
-		execCommand('removeFormat');
-		execCommand('unlink');
+	function removeLink() {
+		editor?.chain().focus().unsetLink().run();
 	}
 
-	function updateValue() {
-		isUpdating = true;
-		value = editorElement.innerHTML;
-		setTimeout(() => {
-			isUpdating = false;
-		}, 0);
-	}
-
-	function handlePaste(e: ClipboardEvent) {
-		e.preventDefault();
-		const text = e.clipboardData?.getData('text/plain') || '';
-		document.execCommand('insertText', false, text);
-		updateValue();
-	}
-
-	function handleKeydown(e: KeyboardEvent) {
-		// Allow Enter key to create line breaks
-		if (e.key === 'Enter' && !e.shiftKey) {
-			e.preventDefault();
-			document.execCommand('insertHTML', false, '<br>');
-			updateValue();
-		}
+	function isActive(extension: string) {
+		return editor?.isActive(extension) ?? false;
 	}
 </script>
 
-<div class="rich-text-editor" class:focused={isFocused}>
+<div class="rich-text-editor">
 	<div class="toolbar">
 		<button
 			type="button"
 			class="toolbar-btn"
-			onclick={() => execCommand('bold')}
+			class:active={isActive('bold')}
+			onclick={setBold}
 			title="Bold"
 		>
 			<strong>B</strong>
@@ -67,7 +101,8 @@
 		<button
 			type="button"
 			class="toolbar-btn"
-			onclick={() => execCommand('italic')}
+			class:active={isActive('italic')}
+			onclick={setItalic}
 			title="Italic"
 		>
 			<em>I</em>
@@ -75,32 +110,24 @@
 		<button
 			type="button"
 			class="toolbar-btn"
-			onclick={insertLink}
+			class:active={isActive('link')}
+			onclick={setLink}
 			title="Insert Link"
 		>
 			Link
 		</button>
-		<button
-			type="button"
-			class="toolbar-btn"
-			onclick={removeFormat}
-			title="Remove Formatting"
-		>
-			Clear
-		</button>
+		{#if isActive('link')}
+			<button
+				type="button"
+				class="toolbar-btn"
+				onclick={removeLink}
+				title="Remove Link"
+			>
+				Unlink
+			</button>
+		{/if}
 	</div>
-	<div
-		bind:this={editorElement}
-		class="editor"
-		contenteditable="true"
-		data-placeholder={placeholder}
-		innerHTML={value}
-		oninput={updateValue}
-		onpaste={handlePaste}
-		onkeydown={handleKeydown}
-		onfocus={() => (isFocused = true)}
-		onblur={() => (isFocused = false)}
-	></div>
+	<div bind:this={editorElement} class="editor-container"></div>
 </div>
 
 <style>
@@ -109,9 +136,10 @@
 		border-radius: 8px;
 		background: white;
 		transition: border-color 0.3s;
+		overflow: hidden;
 	}
 
-	.rich-text-editor.focused {
+	.rich-text-editor:focus-within {
 		border-color: var(--primary-color);
 		box-shadow: 0 0 0 3px rgba(15, 33, 67, 0.1);
 	}
@@ -122,7 +150,7 @@
 		padding: 0.5rem;
 		border-bottom: 1px solid var(--border-color);
 		background: var(--bg-light);
-		border-radius: 8px 8px 0 0;
+		flex-wrap: wrap;
 	}
 
 	.toolbar-btn {
@@ -143,15 +171,31 @@
 		border-color: var(--primary-color);
 	}
 
+	.toolbar-btn.active {
+		background: var(--primary-color);
+		color: white;
+		border-color: var(--primary-color);
+	}
+
 	.toolbar-btn strong,
 	.toolbar-btn em {
 		font-style: normal;
 		font-weight: 700;
 	}
 
-	.editor {
+	.editor-container {
 		min-height: 150px;
 		padding: 0.875rem 1rem;
+	}
+
+	.editor-placeholder {
+		color: #999;
+		font-style: italic;
+		pointer-events: none;
+	}
+
+	:global(.tiptap-editor) {
+		min-height: 150px;
 		font-size: 1rem;
 		font-family: inherit;
 		line-height: 1.6;
@@ -160,26 +204,34 @@
 		max-height: 400px;
 	}
 
-	.editor:empty:before {
-		content: attr(data-placeholder);
-		color: #999;
-		font-style: italic;
-	}
-
-	.editor p {
+	:global(.tiptap-editor p) {
 		margin: 0 0 0.75rem 0;
 	}
 
-	.editor p:last-child {
+	:global(.tiptap-editor p:last-child) {
 		margin-bottom: 0;
 	}
 
-	.editor a {
-		color: var(--primary-color);
-		text-decoration: underline;
+	:global(.tiptap-editor p.is-editor-empty:first-child::before) {
+		content: attr(data-placeholder);
+		float: left;
+		color: #999;
+		pointer-events: none;
+		height: 0;
+		font-style: italic;
 	}
 
-	.editor a:hover {
+	:global(.tiptap-editor:focus p.is-editor-empty:first-child::before) {
+		opacity: 0.5;
+	}
+
+	:global(.tiptap-editor .editor-link) {
+		color: var(--primary-color);
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+	:global(.tiptap-editor .editor-link:hover) {
 		color: var(--grass-green);
 	}
 
@@ -194,4 +246,3 @@
 		}
 	}
 </style>
-
