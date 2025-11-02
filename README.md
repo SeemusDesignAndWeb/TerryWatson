@@ -1,35 +1,91 @@
----
-title: SvelteKit
-description: A simple SvelteKit app
-tags:
-  - svelte
-  - typescript
-  - tailwind
----
+# Terry & Fran Watson Website
 
-# SvelteKit Example
+A modern website built with SvelteKit 5 for Terry and Fran Watson, featuring updates, news, audio content, stories, and information about the Ameva Project.
 
-This example is a simple [SvelteKit](https://svelte.dev/) app.
+## Features
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template/svelte-kit)
+- **Home Page**: Latest update from Terry & Fran
+- **News Page**: Archive of previous updates and news
+- **Audio Page**: Information about audio recordings and messages
+- **Ameva Page**: Details about the Ameva Project in Zimbabwe
+- **Stories Page**: Inspiring stories and testimonies
+- **Pastoral Ministry Book**: Information about Terry's book
 
-## ✨ Features
+## Technology Stack
 
-- Svelte 5
-- TypeScript
-- Tailwind
+- **SvelteKit 5**: Modern web framework
+- **TypeScript**: Type-safe development
+- **Vite**: Fast build tool and dev server
 
-## 💁‍♀️ How to use
+## Getting Started
 
-- Install dependencies `npm ci`
-- Connect to your Railway project `railway link`
-- Start the development server `railway run npm run dev`
+### Installation
 
-## 📝 Notes
+Dependencies are already installed. If you need to reinstall:
 
-This example was created by running `npx sv create svelteapp` And then following our guide to set it up for production readiness - 
+```bash
+npm install --legacy-peer-deps
+```
 
-https://docs.railway.app/guides/sveltekit
+### Development
 
-Please see the [official
-documentation](https://svelte.dev/docs/kit/creating-a-project) for more info.
+Start the development server:
+
+```bash
+npm run dev
+```
+
+The site will be available at `http://localhost:5173`
+
+### Building for Production
+
+Build the site for production:
+
+```bash
+npm run build
+```
+
+Preview the production build:
+
+```bash
+npm run preview
+```
+
+## Project Structure
+
+```
+src/
+├── app.css          # Global styles
+├── app.html         # HTML template
+├── routes/
+│   ├── +layout.svelte    # Main layout with navigation
+│   ├── +page.svelte      # Home page
+│   ├── news/
+│   │   └── +page.svelte  # News page
+│   ├── audio/
+│   │   └── +page.svelte  # Audio page
+│   ├── ameva/
+│   │   └── +page.svelte  # Ameva page
+│   ├── stories/
+│   │   └── +page.svelte  # Stories page
+│   └── pastoral-ministry/
+│       └── +page.svelte  # Pastoral Ministry Book page
+└── lib/
+    └── assets/      # Static assets
+```
+
+## Customization
+
+- Update content in the respective page files in `src/routes/`
+- Modify styles in `src/app.css` or in component `<style>` blocks
+- Navigation items can be updated in `src/routes/+layout.svelte`
+
+## Deployment
+
+This site can be deployed to any platform that supports Node.js, such as:
+- Vercel
+- Netlify
+- Cloudflare Pages
+- Any Node.js hosting service
+
+Simply run `npm run build` and deploy the `build` directory (or follow platform-specific instructions).

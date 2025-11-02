@@ -1,21 +1,18 @@
 <script lang="ts">
 	import '../app.css';
 	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 
 	let { children } = $props();
 
 	let isMenuOpen = $state(false);
-	let isScrolled = $state(false);
-	let isAdminRoute = $derived($page.url.pathname.startsWith('/admin'));
 
 	const navItems = [
-		{ href: '/', label: 'Home' },
-		{ href: '/news', label: 'Updates' },
-		{ href: '/audio', label: 'Podcast' },
-		{ href: '/book', label: 'Book' },
-		{ href: '/ameva', label: 'Ameva' },
-		{ href: '/stories', label: 'Stories' }
+		{ href: '/admin', label: 'Dashboard' },
+		{ href: '/admin/episodes', label: 'Podcast Episodes' },
+		{ href: '/admin/news', label: 'News Updates' },
+		{ href: '/admin/ameva', label: 'Ameva Page' }
 	];
 
 	function toggleMenu() {
@@ -26,28 +23,23 @@
 		isMenuOpen = false;
 	}
 
-	onMount(() => {
-		function handleScroll() {
-			isScrolled = window.scrollY > 50;
-		}
-
-		window.addEventListener('scroll', handleScroll);
-		return () => window.removeEventListener('scroll', handleScroll);
-	});
+	async function handleLogout() {
+		await fetch('/admin/api/logout', { method: 'POST' });
+		goto('/admin/login');
+	}
 </script>
 
 <svelte:head>
-	<title>Terry Watson - News</title>
-	<meta name="description" content="Terry Watson's itinerant preaching ministry with updates, podcast, book, and ministry resources" />
+	<title>Admin - Terry Watson</title>
 </svelte:head>
 
 <div class="app">
-	<header class="header" class:scrolled={isScrolled} class:admin={isAdminRoute}>
+	<header class="header">
 		<nav class="nav">
 			<div class="nav-brand">
-				<a href="/" class="brand-link">
-					<h1>Terry Watson</h1>
-					<span class="tagline">News and updates</span>
+				<a href="/admin" class="brand-link">
+					<h1>Admin</h1>
+					<span class="tagline">Terry Watson</span>
 				</a>
 			</div>
 			
@@ -70,6 +62,11 @@
 						</a>
 					</li>
 				{/each}
+				<li>
+					<button class="nav-link nav-button" onclick={handleLogout}>
+						Logout
+					</button>
+				</li>
 			</ul>
 		</nav>
 	</header>
@@ -77,12 +74,6 @@
 	<main class="main">
 		{@render children()}
 	</main>
-
-	<footer class="footer">
-		<div class="footer-content">
-			<p>&copy; Terry Watson {new Date().getFullYear()}. All rights reserved.</p>
-		</div>
-	</footer>
 </div>
 
 <style>
@@ -94,9 +85,7 @@
 	}
 
 	.header {
-		background: rgba(255, 255, 255, 0.1);
-		backdrop-filter: blur(15px);
-		-webkit-backdrop-filter: blur(15px);
+		background: var(--cerulean-blue);
 		color: white;
 		padding: 1.25rem 0;
 		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -107,27 +96,6 @@
 		width: 100%;
 		z-index: 100;
 		border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-		transition: all 0.3s ease;
-	}
-
-	.header.admin {
-		background: var(--cerulean-blue);
-		backdrop-filter: none;
-		-webkit-backdrop-filter: none;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-	}
-
-	.header.scrolled {
-		background: rgba(15, 33, 67, 0.85);
-		backdrop-filter: blur(20px);
-		-webkit-backdrop-filter: blur(20px);
-		border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-	}
-
-	.header.admin.scrolled {
-		background: var(--cerulean-blue);
-		backdrop-filter: none;
-		-webkit-backdrop-filter: none;
 	}
 
 	.nav {
@@ -217,6 +185,7 @@
 		backdrop-filter: blur(10px);
 		-webkit-backdrop-filter: blur(10px);
 		text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+		display: inline-block;
 	}
 
 	.nav-link:hover,
@@ -227,30 +196,18 @@
 		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 	}
 
+	.nav-button {
+		cursor: pointer;
+		border: none;
+		font-family: inherit;
+	}
+
 	.main {
 		flex: 1;
 		width: 100%;
 		padding: 0;
 		position: relative;
-	}
-
-	.footer {
-		background: var(--pacific-blue);
-		color: rgba(255, 255, 255, 0.8);
-		padding: 2rem 2rem;
-		margin-top: 4rem;
-	}
-
-	.footer-content {
-		max-width: 1400px;
-		margin: 0 auto;
-		text-align: center;
-	}
-
-	.footer p {
-		margin: 0;
-		color: rgba(255, 255, 255, 0.7);
-		font-size: 0.9rem;
+		padding-top: 100px; /* Account for fixed header */
 	}
 
 	@media (max-width: 768px) {
@@ -291,3 +248,4 @@
 		}
 	}
 </style>
+
