@@ -10,8 +10,8 @@
 
 <section class="page-hero">
 	<div class="container">
-		<h1>📰 Ministry Updates</h1>
-		<p class="subtitle">Stay connected with the latest news from the ministry</p>
+		<h1>📰 News & Updates</h1>
+		<p class="subtitle">Stay connected with the latest news from Terry</p>
 	</div>
 </section>
 

@@ -3,6 +3,22 @@
 	import type { PageData } from './$types';
 
 	let { data } = $props<{ data: PageData }>();
+	
+	let searchQuery = $state('');
+	
+	const filteredEpisodes = $derived(() => {
+		if (!searchQuery.trim()) {
+			return data.episodes;
+		}
+		
+		const query = searchQuery.toLowerCase().trim();
+		return data.episodes.filter((episode) => {
+			const titleMatch = episode.title?.toLowerCase().includes(query);
+			const descMatch = episode.description?.toLowerCase().includes(query);
+			const dateMatch = episode.date?.toLowerCase().includes(query);
+			return titleMatch || descMatch || dateMatch;
+		});
+	});
 </script>
 
 <svelte:head>
@@ -26,7 +42,42 @@
 			<div class="section">
 				<h2>🎧 Listen to Sermons</h2>
 				<p>Select an episode from the dropdown below to start listening. Messages are available from various locations and occasions including Sunday services, Bible studies, and special events.</p>
-				<PodcastPlayer episodes={data.episodes} />
+				
+				<div class="search-container">
+					<div class="search-box">
+						<svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="11" cy="11" r="8"></circle>
+							<path d="m21 21-4.35-4.35"></path>
+						</svg>
+						<input
+							type="text"
+							placeholder="Search episodes by title, description, or date..."
+							bind:value={searchQuery}
+							class="search-input"
+							aria-label="Search episodes"
+						/>
+						{#if searchQuery}
+							<button
+								type="button"
+								onclick={() => searchQuery = ''}
+								class="clear-search"
+								aria-label="Clear search"
+							>
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<line x1="18" y1="6" x2="6" y2="18"></line>
+									<line x1="6" y1="6" x2="18" y2="18"></line>
+								</svg>
+							</button>
+						{/if}
+					</div>
+					{#if searchQuery && filteredEpisodes().length === 0}
+						<p class="no-results">No episodes found matching "{searchQuery}"</p>
+					{:else if searchQuery}
+						<p class="search-results-count">{filteredEpisodes().length} episode{filteredEpisodes().length !== 1 ? 's' : ''} found</p>
+					{/if}
+				</div>
+				
+				<PodcastPlayer episodes={filteredEpisodes()} />
 			</div>
 			
 			<div class="section">
@@ -268,5 +319,86 @@
 		.cta-buttons .btn {
 			width: 100%;
 		}
+	}
+
+	.search-container {
+		margin: 2rem 0;
+	}
+
+	.search-box {
+		position: relative;
+		display: flex;
+		align-items: center;
+		background: white;
+		border: 2px solid var(--border-color);
+		border-radius: 12px;
+		padding: 0.75rem 1rem;
+		transition: all 0.3s ease;
+	}
+
+	.search-box:focus-within {
+		border-color: var(--primary-color);
+		box-shadow: 0 0 0 3px rgba(15, 33, 67, 0.1);
+	}
+
+	.search-icon {
+		width: 20px;
+		height: 20px;
+		color: var(--text-light);
+		margin-right: 0.75rem;
+		flex-shrink: 0;
+	}
+
+	.search-input {
+		flex: 1;
+		border: none;
+		outline: none;
+		font-size: 1rem;
+		color: var(--text-color);
+		background: transparent;
+	}
+
+	.search-input::placeholder {
+		color: var(--text-light);
+	}
+
+	.clear-search {
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: 0.25rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--text-light);
+		transition: color 0.2s;
+		margin-left: 0.5rem;
+		border-radius: 4px;
+	}
+
+	.clear-search:hover {
+		color: var(--primary-color);
+		background: rgba(15, 33, 67, 0.05);
+	}
+
+	.clear-search svg {
+		width: 18px;
+		height: 18px;
+	}
+
+	.search-results-count {
+		margin-top: 0.75rem;
+		font-size: 0.9rem;
+		color: var(--text-light);
+		font-style: italic;
+	}
+
+	.no-results {
+		margin-top: 0.75rem;
+		padding: 1rem;
+		background: rgba(220, 53, 69, 0.1);
+		border-radius: 8px;
+		color: var(--text-color);
+		font-style: italic;
 	}
 </style>

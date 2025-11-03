@@ -16,6 +16,8 @@
 	let currentTime = $state(0);
 	let duration = $state(0);
 	let volume = $state(1);
+	
+	const isGoogleDriveUrl = $derived(currentEpisode?.audioUrl?.includes('drive.google.com') || false);
 
 	function formatTime(seconds: number): string {
 		if (isNaN(seconds)) return '0:00';
@@ -105,19 +107,32 @@
 			<p class="episode-description">{currentEpisode.description}</p>
 		{/if}
 
-		<audio
-			bind:this={audioElement}
-			ontimeupdate={updateTime}
-			onloadedmetadata={updateDuration}
-			onended={ended}
-			preload="metadata"
-		>
-			{#if currentEpisode?.audioUrl}
-				<source src={currentEpisode.audioUrl} type="audio/mpeg" />
-				Your browser does not support the audio element.
-			{/if}
-		</audio>
+		{#if isGoogleDriveUrl}
+			<div class="google-drive-notice">
+				<p>This audio is hosted on Google Drive. Click the button below to play it.</p>
+				<a href={currentEpisode?.audioUrl} target="_blank" rel="noopener noreferrer" class="google-drive-button">
+					<svg viewBox="0 0 24 24" fill="currentColor">
+						<path d="M8 5v14l11-7z" />
+					</svg>
+					<span>Play on Google Drive</span>
+				</a>
+			</div>
+		{:else}
+			<audio
+				bind:this={audioElement}
+				ontimeupdate={updateTime}
+				onloadedmetadata={updateDuration}
+				onended={ended}
+				preload="metadata"
+			>
+				{#if currentEpisode?.audioUrl}
+					<source src={currentEpisode.audioUrl} type="audio/mpeg" />
+					Your browser does not support the audio element.
+				{/if}
+			</audio>
+		{/if}
 
+		{#if !isGoogleDriveUrl}
 		<div class="player-controls">
 			<button class="play-button" onclick={togglePlay} aria-label={isPlaying ? 'Pause' : 'Play'}>
 				{#if isPlaying}
@@ -163,6 +178,7 @@
 				/>
 			</div>
 		</div>
+		{/if}
 	</div>
 </div>
 
@@ -366,6 +382,45 @@
 		background: var(--primary-color);
 		cursor: pointer;
 		border: none;
+	}
+
+	.google-drive-notice {
+		background: linear-gradient(135deg, rgba(15, 33, 67, 0.1) 0%, rgba(53, 78, 86, 0.1) 100%);
+		padding: 1.5rem;
+		border-radius: 12px;
+		margin: 1.5rem 0;
+		text-align: center;
+	}
+
+	.google-drive-notice p {
+		margin: 0 0 1rem 0;
+		color: var(--text-light);
+		font-size: 0.95rem;
+	}
+
+	.google-drive-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.75rem;
+		background: linear-gradient(135deg, var(--cerulean-blue) 0%, var(--pacific-blue) 100%);
+		color: white;
+		padding: 0.75rem 1.5rem;
+		border-radius: 8px;
+		text-decoration: none;
+		font-weight: 600;
+		transition: all 0.3s ease;
+		box-shadow: var(--shadow);
+	}
+
+	.google-drive-button:hover {
+		transform: translateY(-2px);
+		box-shadow: var(--shadow-lg);
+		background: linear-gradient(135deg, var(--pacific-blue) 0%, var(--grass-green) 100%);
+	}
+
+	.google-drive-button svg {
+		width: 20px;
+		height: 20px;
 	}
 
 	@media (max-width: 768px) {

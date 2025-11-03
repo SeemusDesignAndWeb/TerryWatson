@@ -1,3 +1,27 @@
+<script lang="ts">
+	import PodcastPlayer from '$lib/PodcastPlayer.svelte';
+	import type { PageData } from './$types';
+
+	let { data } = $props<{ data: PageData }>();
+	
+	let searchQuery = $state('');
+	
+	const filteredStories = $derived(() => {
+		if (!data.stories) return [];
+		if (!searchQuery.trim()) {
+			return data.stories;
+		}
+		
+		const query = searchQuery.toLowerCase().trim();
+		return data.stories.filter((story) => {
+			const titleMatch = story.title?.toLowerCase().includes(query);
+			const descMatch = story.description?.toLowerCase().includes(query);
+			const dateMatch = story.date?.toLowerCase().includes(query);
+			return titleMatch || descMatch || dateMatch;
+		});
+	});
+</script>
+
 <svelte:head>
 	<title>Stories - Terry Watson</title>
 </svelte:head>
@@ -5,7 +29,7 @@
 <section class="page-hero">
 	<div class="container">
 		<h1>📖 Stories</h1>
-		<p class="subtitle">Inspiring stories and testimonies from the ministry</p>
+		<p class="subtitle">Inspiring stories from various sources</p>
 	</div>
 </section>
 
@@ -19,6 +43,46 @@
 			<div class="section">
 				<h2>Recorded Stories</h2>
 				<p>Terry is recording stories that challenge and inspire, available on the <a href="https://www.newliferadio.co.uk/audio-pages/terry_watson_stories" target="_blank" rel="noopener noreferrer">New Life Radio website</a>. These stories share experiences, lessons learned, and testimonies from our journey of faith and ministry.</p>
+				
+				{#if data.stories && data.stories.length > 0}
+					<div class="search-container">
+						<div class="search-box">
+							<svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<circle cx="11" cy="11" r="8"></circle>
+								<path d="m21 21-4.35-4.35"></path>
+							</svg>
+							<input
+								type="text"
+								placeholder="Search stories by title, description, or date..."
+								bind:value={searchQuery}
+								class="search-input"
+								aria-label="Search stories"
+							/>
+							{#if searchQuery}
+								<button
+									type="button"
+									onclick={() => searchQuery = ''}
+									class="clear-search"
+									aria-label="Clear search"
+								>
+									<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+										<line x1="18" y1="6" x2="6" y2="18"></line>
+										<line x1="6" y1="6" x2="18" y2="18"></line>
+									</svg>
+								</button>
+							{/if}
+						</div>
+						{#if searchQuery && filteredStories().length === 0}
+							<p class="no-results">No stories found matching "{searchQuery}"</p>
+						{:else if searchQuery}
+							<p class="search-results-count">{filteredStories().length} story{filteredStories().length !== 1 ? 'ies' : ''} found</p>
+						{/if}
+					</div>
+					
+					<PodcastPlayer episodes={filteredStories()} />
+				{:else}
+					<p class="no-stories">Stories are loading from New Life Radio...</p>
+				{/if}
 			</div>
 			
 			<div class="section">
@@ -127,6 +191,96 @@
 
 	.section a:hover {
 		color: var(--grass-green);
+	}
+
+	.no-stories {
+		margin-top: 1rem;
+		padding: 1rem;
+		background: rgba(15, 33, 67, 0.05);
+		border-radius: 8px;
+		font-style: italic;
+		color: var(--text-light);
+	}
+
+	.search-container {
+		margin: 2rem 0;
+	}
+
+	.search-box {
+		position: relative;
+		display: flex;
+		align-items: center;
+		background: white;
+		border: 2px solid var(--border-color);
+		border-radius: 12px;
+		padding: 0.75rem 1rem;
+		transition: all 0.3s ease;
+	}
+
+	.search-box:focus-within {
+		border-color: var(--primary-color);
+		box-shadow: 0 0 0 3px rgba(15, 33, 67, 0.1);
+	}
+
+	.search-icon {
+		width: 20px;
+		height: 20px;
+		color: var(--text-light);
+		margin-right: 0.75rem;
+		flex-shrink: 0;
+	}
+
+	.search-input {
+		flex: 1;
+		border: none;
+		outline: none;
+		font-size: 1rem;
+		color: var(--text-color);
+		background: transparent;
+	}
+
+	.search-input::placeholder {
+		color: var(--text-light);
+	}
+
+	.clear-search {
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: 0.25rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--text-light);
+		transition: color 0.2s;
+		margin-left: 0.5rem;
+		border-radius: 4px;
+	}
+
+	.clear-search:hover {
+		color: var(--primary-color);
+		background: rgba(15, 33, 67, 0.05);
+	}
+
+	.clear-search svg {
+		width: 18px;
+		height: 18px;
+	}
+
+	.search-results-count {
+		margin-top: 0.75rem;
+		font-size: 0.9rem;
+		color: var(--text-light);
+		font-style: italic;
+	}
+
+	.no-results {
+		margin-top: 0.75rem;
+		padding: 1rem;
+		background: rgba(220, 53, 69, 0.1);
+		border-radius: 8px;
+		color: var(--text-color);
+		font-style: italic;
 	}
 
 	@media (max-width: 768px) {
