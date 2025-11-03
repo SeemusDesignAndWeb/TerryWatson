@@ -13,9 +13,10 @@
 		{ href: '/', label: 'Home' },
 		{ href: '/news', label: 'Updates' },
 		{ href: '/audio', label: 'Audio' },
+		{ href: '/stories', label: 'Stories' },
 		{ href: '/book', label: 'Book' },
 		{ href: '/ameva', label: 'Ameva' },
-		{ href: '/stories', label: 'Stories' }
+		
 	];
 
 	function toggleMenu() {
@@ -45,8 +46,8 @@
 	<header class="header" class:scrolled={isScrolled} class:admin={isAdminRoute}>
 		<nav class="nav">
 			<div class="nav-brand">
-				<a href="/" class="brand-link">
-					<h1>Terry Watson</h1>
+				<a href="/" class="brand-link" class:hidden={!isScrolled}>
+					<h1>The home of Terry Watson</h1>
 					<span class="tagline">News and updates</span>
 				</a>
 			</div>
@@ -146,6 +147,14 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.25rem;
+		transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+	}
+
+	.brand-link.hidden {
+		opacity: 0;
+		transform: translateY(-10px);
+		visibility: hidden;
+		pointer-events: none;
 	}
 
 	.nav-brand h1 {

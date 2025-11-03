@@ -1,6 +1,7 @@
 <script lang="ts">
 	import PodcastPlayer from '$lib/PodcastPlayer.svelte';
 	import type { PageData } from './$types';
+	import type { Episode } from '$lib/types';
 
 	let { data } = $props<{ data: PageData }>();
 	
@@ -13,7 +14,7 @@
 		}
 		
 		const query = searchQuery.toLowerCase().trim();
-		return data.stories.filter((story) => {
+		return data.stories.filter((story: Episode) => {
 			const titleMatch = story.title?.toLowerCase().includes(query);
 			const descMatch = story.description?.toLowerCase().includes(query);
 			const dateMatch = story.date?.toLowerCase().includes(query);
@@ -75,7 +76,7 @@
 						{#if searchQuery && filteredStories().length === 0}
 							<p class="no-results">No stories found matching "{searchQuery}"</p>
 						{:else if searchQuery}
-							<p class="search-results-count">{filteredStories().length} story{filteredStories().length !== 1 ? 'ies' : ''} found</p>
+							<p class="search-results-count">{filteredStories().length} {filteredStories().length !== 1 ? 'stories' : 'story'} found</p>
 						{/if}
 					</div>
 					

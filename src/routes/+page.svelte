@@ -34,7 +34,7 @@
 	<div class="hero-container">
 		<div class="hero-content">
 			<div class="hero-text">
-				<h1 class="hero-title">Welcome</h1>
+				<h1 class="hero-title">The home of Terry Watson</h1>
 				{#if latestExcerpt}
 					<div class="hero-excerpt">
 						<p class="hero-excerpt-text">{latestExcerpt}</p>
@@ -50,7 +50,7 @@
 			</div>
 		</div>
 		<div class="hero-image">
-			<img src="/images/terryandfranwatson.png" alt="Terry & Fran Watson" />
+			<img src="/images/terryandfranwatson_500.png" alt="Terry & Fran Watson" />
 		</div>
 	</div>
 </section>
