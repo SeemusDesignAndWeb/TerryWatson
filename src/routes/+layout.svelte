@@ -44,12 +44,12 @@
 </svelte:head>
 
 <div class="app">
-	<header class="header" class:scrolled={isScrolled} class:admin={isAdminRoute}>
+	<header class="header" class:scrolled={isScrolled} class:admin={isAdminRoute} class:at-top={!isScrolled}>
 		<nav class="nav">
 			<div class="nav-brand">
-				<a href="/" class="brand-link" class:hidden={!isScrolled}>
-					<h1>{isHomePage ? 'The home of Terry Watson' : 'Terry Watson'}</h1>
-					<span class="tagline">News and updates</span>
+				<a href="/" class="brand-link" class:hidden={isHomePage && !isScrolled}>
+					<h1>The home of Terry Watson</h1>
+					<span class="tagline">News, audio, and updates</span>
 				</a>
 			</div>
 			
@@ -110,6 +110,30 @@
 		z-index: 100;
 		border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 		transition: all 0.3s ease;
+	}
+
+	.header.at-top {
+		background: transparent;
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		box-shadow: none;
+		border-bottom: none;
+	}
+
+	@media (max-width: 768px) {
+		.header.at-top {
+			background: rgba(255, 255, 255, 0.1);
+			backdrop-filter: blur(15px);
+			-webkit-backdrop-filter: blur(15px);
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+			border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+		}
+
+		.header.at-top.scrolled {
+			background: rgba(15, 33, 67, 0.85);
+			backdrop-filter: blur(20px);
+			-webkit-backdrop-filter: blur(20px);
+		}
 	}
 
 	.header.admin {

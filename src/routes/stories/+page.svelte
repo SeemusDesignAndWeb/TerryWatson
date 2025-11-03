@@ -104,7 +104,7 @@
 	.page-hero {
 		background: linear-gradient(135deg, var(--cerulean-blue) 0%, var(--pacific-blue) 50%, var(--grass-green) 100%);
 		color: white;
-		padding: calc(4rem + 100px) 2rem 4rem 2rem;
+		padding: calc(2.5rem + 60px) 2rem 2.5rem 2rem;
 		text-align: center;
 		margin-top: 0;
 	}
@@ -286,7 +286,7 @@
 
 	@media (max-width: 768px) {
 		.page-hero {
-			padding: calc(3rem + 100px) 1.5rem 3rem 1.5rem;
+			padding: calc(2rem + 60px) 1.5rem 2rem 1.5rem;
 		}
 
 		.page-content {

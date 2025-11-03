@@ -34,7 +34,7 @@
 	<div class="hero-container">
 		<div class="hero-content">
 			<div class="hero-text">
-				<h1 class="hero-title">The home of Terry Watson</h1>
+				<h1 class="hero-title">The home of<br/>Terry Watson</h1>
 				{#if latestExcerpt}
 					<div class="hero-excerpt">
 						<p class="hero-excerpt-text">{latestExcerpt}</p>
@@ -85,7 +85,7 @@
 	.hero {
 		position: relative;
 		background: linear-gradient(135deg, #0a1628 0%, #1a2d42 50%, #0f2143 100%);
-		padding: calc(5rem + 100px) 2rem 6rem 2rem;
+		padding: calc(3rem + 60px) 2rem 4rem 2rem;
 		overflow: hidden;
 		min-height: 70vh;
 		display: flex;
@@ -301,7 +301,7 @@
 
 	@media (max-width: 768px) {
 		.hero {
-			padding: calc(3rem + 100px) 1.5rem 4rem 1.5rem;
+			padding: calc(2rem + 60px) 1.5rem 3rem 1.5rem;
 			min-height: auto;
 		}
 
