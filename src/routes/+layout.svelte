@@ -8,6 +8,7 @@
 	let isMenuOpen = $state(false);
 	let isScrolled = $state(false);
 	let isAdminRoute = $derived($page.url.pathname.startsWith('/admin'));
+	let isHomePage = $derived($page.url.pathname === '/');
 
 	const navItems = [
 		{ href: '/', label: 'Home' },
@@ -47,7 +48,7 @@
 		<nav class="nav">
 			<div class="nav-brand">
 				<a href="/" class="brand-link" class:hidden={!isScrolled}>
-					<h1>The home of Terry Watson</h1>
+					<h1>{isHomePage ? 'The home of Terry Watson' : 'Terry Watson'}</h1>
 					<span class="tagline">News and updates</span>
 				</a>
 			</div>
