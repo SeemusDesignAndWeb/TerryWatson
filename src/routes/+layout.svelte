@@ -335,7 +335,8 @@
 		}
 
 		.tagline {
-			display: none;
+			font-size: 0.6rem;
+			display: block;
 		}
 
 		.menu-toggle {
