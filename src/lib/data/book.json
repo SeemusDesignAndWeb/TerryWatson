@@ -1,6 +1,6 @@
 {
-  "intro": "Discover wisdom and practical insights from Terry Watson's extensive experience in pastoral ministry and itinerant preaching.",
-  "about": "This comprehensive resource draws from decades of ministry work, sharing valuable lessons learned from pastoral ministry, itinerant preaching, and mission work around the world. The book provides practical guidance for ministers, church leaders, and anyone involved in ministry work.\n\nBased on real experiences and biblical foundations, this book offers timeless wisdom for effective ministry in today's world.",
+  "intro": "By Terry & Frances Watson",
+  "about": "The Pastoral Ministry is available in paperback or Kindle.",
   "topics": [
     "Pastoral care and leadership",
     "Itinerant preaching ministry",
@@ -9,5 +9,18 @@
     "Teaching and discipleship",
     "Practical ministry wisdom"
   ],
-  "availability": "We're currently working on making this valuable resource available. Please check back for updates on publication date and purchasing information.\n\nFor updates on the book's release, please visit our Updates page or subscribe to stay informed."
+  "availability": "New copies available from Terry & Frances Watson, contact us below.",
+  "purchaseOptions": {
+    "kindle": {
+      "price": "£3.02",
+      "description": "Kindle version"
+    },
+    "paperbackUsed": {
+      "description": "Second hand paperback version"
+    },
+    "paperbackNew": {
+      "description": "New copies available from Terry & Frances Watson"
+    }
+  },
+  "contactEmail": "terryandfran.info.update@gmail.com"
 }

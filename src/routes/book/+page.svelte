@@ -19,16 +19,30 @@
 	<div class="container">
 		<div class="content-card">
 			<div class="intro">
-				<p class="large-text">{@html data.bookContent.intro}</p>
+				<p class="large-text">{data.bookContent.intro}</p>
 			</div>
 			
 			<div class="section">
-				<h2>About the Book</h2>
-				{#each data.bookContent.about.split('\n\n') as paragraph}
-					{#if paragraph.trim()}
-						<p>{@html paragraph.trim().replace(/\n/g, '<br>')}</p>
-					{/if}
-				{/each}
+				<h2>Purchase the book online</h2>
+				<p>{data.bookContent.about}</p>
+				
+				<div class="purchase-options">
+					<div class="purchase-option">
+						<h3>Kindle Version</h3>
+						<p class="price">£{data.bookContent.purchaseOptions?.kindle?.price || '3.02'}</p>
+						<a href="https://www.amazon.co.uk/dp/B0CHJZNX2K" target="_blank" rel="noopener noreferrer" class="btn btn-purchase">Purchase Kindle</a>
+					</div>
+					
+					<div class="purchase-option">
+						<h3>Second Hand Paperback</h3>
+						<a href="https://www.amazon.co.uk/s?k=The+Pastoral+Ministry+Terry+Watson&i=stripbooks" target="_blank" rel="noopener noreferrer" class="btn btn-purchase">View on Amazon</a>
+					</div>
+					
+					<div class="purchase-option">
+						<h3>New Paperback Copies</h3>
+						<p>{data.bookContent.availability}</p>
+					</div>
+				</div>
 			</div>
 			
 			<div class="section highlight">
@@ -42,21 +56,10 @@
 				</ul>
 			</div>
 			
-			<div class="section">
-				<h2>Availability</h2>
-				{#each data.bookContent.availability.split('\n\n') as paragraph}
-					{#if paragraph.trim()}
-						<p>{@html paragraph.trim().replace(/\n/g, '<br>')}</p>
-					{/if}
-				{/each}
-			</div>
-			
-			<div class="cta-section">
-				<p>Interested in learning more?</p>
-				<div class="cta-buttons">
-					<a href="/news" class="btn">Stay Updated</a>
-					<a href="/audio" class="btn btn-secondary">Listen to Audio</a>
-				</div>
+			<div class="section contact-section">
+				<h2>Let's Get In Touch!</h2>
+				<p>We would love to hear from you</p>
+				<a href="mailto:{data.bookContent.contactEmail || 'terryandfran.info.update@gmail.com'}" class="btn btn-contact">{data.bookContent.contactEmail || 'terryandfran.info.update@gmail.com'}</a>
 			</div>
 		</div>
 	</div>
@@ -215,6 +218,88 @@
 		border-color: var(--yarrow-gold);
 	}
 
+	.purchase-options {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		gap: 2rem;
+		margin-top: 2rem;
+	}
+
+	.purchase-option {
+		background: linear-gradient(135deg, rgba(67, 87, 46, 0.05) 0%, rgba(53, 78, 86, 0.05) 100%);
+		padding: 2rem;
+		border-radius: 12px;
+		border: 2px solid var(--border-color);
+		text-align: center;
+	}
+
+	.purchase-option h3 {
+		color: var(--primary-color);
+		margin-bottom: 1rem;
+		font-size: 1.3rem;
+	}
+
+	.purchase-option p {
+		margin-bottom: 1rem;
+	}
+
+	.price {
+		font-size: 1.5rem;
+		font-weight: bold;
+		color: var(--yarrow-gold);
+		margin: 1rem 0;
+	}
+
+	.btn-purchase {
+		background: var(--yarrow-gold);
+		color: white;
+		padding: 0.875rem 2rem;
+		border-radius: 8px;
+		text-decoration: none;
+		display: inline-block;
+		transition: all 0.3s ease;
+		font-weight: 600;
+		box-shadow: 0 4px 15px rgba(139, 98, 18, 0.3);
+	}
+
+	.btn-purchase:hover {
+		background: var(--accent-dark);
+		transform: translateY(-2px);
+		box-shadow: 0 6px 20px rgba(139, 98, 18, 0.4);
+	}
+
+	.contact-section {
+		text-align: center;
+	}
+
+	.contact-section h2 {
+		margin-bottom: 1rem;
+	}
+
+	.contact-section p {
+		margin-bottom: 1.5rem;
+		font-size: 1.1rem;
+	}
+
+	.btn-contact {
+		background: var(--cerulean-blue);
+		color: white;
+		padding: 1rem 2rem;
+		border-radius: 8px;
+		text-decoration: none;
+		display: inline-block;
+		transition: all 0.3s ease;
+		font-weight: 600;
+		font-size: 1.1rem;
+		box-shadow: 0 4px 15px rgba(15, 33, 67, 0.3);
+	}
+
+	.btn-contact:hover {
+		background: var(--pacific-blue);
+		transform: translateY(-2px);
+		box-shadow: 0 6px 20px rgba(15, 33, 67, 0.4);
+	}
+
 	@media (max-width: 768px) {
 		.page-hero {
 			padding: calc(2rem + 60px) 1.5rem 2rem 1.5rem;
@@ -246,6 +331,29 @@
 
 		.cta-buttons .btn {
 			width: 100%;
+		}
+
+		.purchase-options {
+			grid-template-columns: 1fr;
+			gap: 1.5rem;
+		}
+
+		.purchase-option {
+			padding: 1.5rem;
+		}
+	}
+
+	@media (max-width: 375px) {
+		.page-hero {
+			padding: calc(1.5rem + 60px) 0.75rem 1.5rem 0.75rem;
+		}
+
+		.page-content {
+			padding: 2rem 0.75rem;
+		}
+
+		.content-card {
+			padding: 1.5rem 0.75rem;
 		}
 	}
 </style>

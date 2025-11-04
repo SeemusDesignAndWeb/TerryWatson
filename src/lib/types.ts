@@ -27,5 +27,18 @@ export interface BookContent {
 	about: string;
 	topics: string[];
 	availability: string;
+	purchaseOptions?: {
+		kindle?: {
+			price?: string;
+			description?: string;
+		};
+		paperbackUsed?: {
+			description?: string;
+		};
+		paperbackNew?: {
+			description?: string;
+		};
+	};
+	contactEmail?: string;
 }
 
