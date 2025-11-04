@@ -301,12 +301,14 @@
 
 	@media (max-width: 768px) {
 		.hero {
-			padding: calc(2rem + 60px) 1.5rem 3rem 1.5rem;
+			padding: calc(2rem + 60px) 1rem 3rem 1rem;
 			min-height: auto;
 		}
 
 		.hero-container {
 			gap: 2rem;
+			width: 100%;
+			padding: 0;
 		}
 
 		.hero-buttons {
@@ -323,12 +325,24 @@
 		}
 
 		.features {
-			padding: 3rem 1.5rem;
+			padding: 3rem 1rem;
+			width: 100%;
+			box-sizing: border-box;
 		}
 
 		.features-grid {
 			grid-template-columns: 1fr;
 			gap: 2rem;
+		}
+	}
+
+	@media (max-width: 375px) {
+		.hero {
+			padding: calc(1.5rem + 60px) 0.75rem 2rem 0.75rem;
+		}
+
+		.features {
+			padding: 2rem 0.75rem;
 		}
 	}
 </style>

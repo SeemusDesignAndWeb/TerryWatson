@@ -60,6 +60,8 @@
 	.page-content {
 		padding: 4rem 2rem;
 		background: var(--bg-light);
+		width: 100%;
+		box-sizing: border-box;
 	}
 
 	.content-card {
@@ -146,11 +148,15 @@
 		}
 
 		.page-content {
-			padding: 3rem 1.5rem;
+			padding: 3rem 1rem;
+			width: 100%;
+			max-width: 100%;
 		}
 
 		.content-card {
-			padding: 2rem 1.5rem;
+			padding: 2rem 1rem;
+			width: 100%;
+			max-width: 100%;
 		}
 
 		.intro {

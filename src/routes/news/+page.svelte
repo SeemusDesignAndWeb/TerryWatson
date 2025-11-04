@@ -61,6 +61,8 @@
 	.updates-section {
 		padding: 4rem 2rem;
 		background: var(--bg-light);
+		width: 100%;
+		box-sizing: border-box;
 	}
 
 	.updates-list {
@@ -125,8 +127,16 @@
 			padding: calc(2rem + 60px) 1.5rem 2rem 1.5rem;
 		}
 
+		.page-content {
+			padding: 3rem 1rem;
+			width: 100%;
+			max-width: 100%;
+		}
+
 		.updates-section {
-			padding: 3rem 1.5rem;
+			padding: 3rem 1rem;
+			width: 100%;
+			max-width: 100%;
 		}
 
 		.updates-list {
@@ -139,6 +149,17 @@
 
 		.update-content {
 			padding: 2rem 1.5rem;
+		}
+	}
+
+	@media (max-width: 375px) {
+		.page-hero {
+			padding: calc(1.5rem + 60px) 0.75rem 1.5rem 0.75rem;
+		}
+
+		.page-content,
+		.updates-section {
+			padding: 2rem 0.75rem;
 		}
 	}
 </style>

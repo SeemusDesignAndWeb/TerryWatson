@@ -274,6 +274,14 @@
 		width: 100%;
 		padding: 0;
 		position: relative;
+		overflow-x: hidden;
+	}
+
+	@media (max-width: 375px) {
+		.main {
+			width: 100%;
+			max-width: 100vw;
+		}
 	}
 
 	.footer {
