@@ -209,6 +209,12 @@
 		cursor: pointer;
 		padding: 0.5rem;
 		z-index: 101;
+		position: relative;
+		width: 44px;
+		height: 44px;
+		justify-content: center;
+		align-items: center;
+		flex-shrink: 0;
 	}
 
 	.menu-toggle.active .hamburger:nth-child(1) {
@@ -296,13 +302,15 @@
 
 		.nav {
 			padding: 0 1rem;
-			flex-wrap: nowrap;
+			flex-wrap: wrap;
 			gap: 0.5rem;
+			align-items: flex-start;
 		}
 
 		.nav-brand {
-			flex: 0 0 auto;
+			flex: 1 1 auto;
 			order: 1;
+			min-width: 0;
 			max-width: calc(100% - 60px);
 			overflow: hidden;
 		}
@@ -327,19 +335,25 @@
 			order: 2;
 			margin-left: auto;
 			flex-shrink: 0;
+			position: relative;
+			top: 0;
+			right: 0;
 		}
 
 		.nav-menu {
 			display: none;
 			flex-direction: column;
 			width: 100%;
-			margin-top: 1rem;
+			margin-top: 0.5rem;
 			gap: 0.75rem;
 			background: rgba(255, 255, 255, 0.15);
 			padding: 1rem;
 			border-radius: 16px;
 			backdrop-filter: blur(15px);
 			-webkit-backdrop-filter: blur(15px);
+			order: 3;
+			position: relative;
+			flex-basis: 100%;
 		}
 
 		.nav-menu.open {
@@ -361,6 +375,7 @@
 			box-sizing: border-box;
 			margin: 0;
 			display: block;
+			white-space: nowrap;
 		}
 
 		.brand-link {
