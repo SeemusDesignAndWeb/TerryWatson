@@ -308,6 +308,7 @@
 		background: var(--border-color);
 		outline: none;
 		-webkit-appearance: none;
+		appearance: none;
 		cursor: pointer;
 	}
 
@@ -363,6 +364,7 @@
 		background: var(--border-color);
 		outline: none;
 		-webkit-appearance: none;
+		appearance: none;
 		cursor: pointer;
 	}
 

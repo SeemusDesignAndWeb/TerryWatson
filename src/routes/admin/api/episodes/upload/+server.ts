@@ -22,6 +22,8 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		// Convert file to buffer
 		const arrayBuffer = await file.arrayBuffer();
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const { Buffer } = require('buffer');
 		const buffer = Buffer.from(arrayBuffer);
 
 		// Upload to Cloudinary

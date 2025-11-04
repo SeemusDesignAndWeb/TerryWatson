@@ -100,7 +100,7 @@
 		backdrop-filter: blur(15px);
 		-webkit-backdrop-filter: blur(15px);
 		color: white;
-		padding: 1.25rem 0;
+		padding: 1rem 0;
 		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 		position: fixed;
 		top: 0;
@@ -164,6 +164,7 @@
 		justify-content: space-between;
 		align-items: center;
 		flex-wrap: wrap;
+		gap: 1rem;
 	}
 
 	.brand-link {
@@ -184,10 +185,11 @@
 
 	.nav-brand h1 {
 		margin: 0;
-		font-size: clamp(1.5rem, 3vw, 2rem);
+		font-size: clamp(1.25rem, 3vw, 2rem);
 		font-weight: 800;
 		color: white;
 		text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+		line-height: 1.2;
 	}
 
 	.tagline {
@@ -288,8 +290,43 @@
 	}
 
 	@media (max-width: 768px) {
+		.header {
+			padding: 0.5rem 0;
+		}
+
+		.nav {
+			padding: 0 1rem;
+			flex-wrap: nowrap;
+			gap: 0.5rem;
+		}
+
+		.nav-brand {
+			flex: 0 0 auto;
+			order: 1;
+			max-width: calc(100% - 60px);
+			overflow: hidden;
+		}
+
+		.nav-brand h1 {
+			font-size: 1rem;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.brand-link {
+			gap: 0.125rem;
+		}
+
+		.tagline {
+			display: none;
+		}
+
 		.menu-toggle {
 			display: flex;
+			order: 2;
+			margin-left: auto;
+			flex-shrink: 0;
 		}
 
 		.nav-menu {
