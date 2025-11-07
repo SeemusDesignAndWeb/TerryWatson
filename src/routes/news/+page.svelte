@@ -25,11 +25,7 @@
 						<span class="update-date">{update.date}</span>
 					</div>
 					<div class="update-content">
-						{#each update.content.split('\n\n') as paragraph}
-							{#if paragraph.trim()}
-								<p>{paragraph.trim()}</p>
-							{/if}
-						{/each}
+						{@html update.content}
 					</div>
 				</article>
 			{/each}

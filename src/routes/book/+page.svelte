@@ -19,12 +19,12 @@
 	<div class="container">
 		<div class="content-card">
 			<div class="intro">
-				<p class="large-text">{data.bookContent.intro}</p>
+				<p class="large-text">{@html data.bookContent.intro}</p>
 			</div>
 			
 			<div class="section">
 				<h2>Purchase the book online</h2>
-				<p>{data.bookContent.about}</p>
+				<p>{@html data.bookContent.about}</p>
 				
 				<div class="purchase-options">
 					<div class="purchase-option">
@@ -40,7 +40,7 @@
 					
 					<div class="purchase-option">
 						<h3>New Paperback Copies</h3>
-						<p>{data.bookContent.availability}</p>
+						<p>{@html data.bookContent.availability}</p>
 					</div>
 				</div>
 			</div>

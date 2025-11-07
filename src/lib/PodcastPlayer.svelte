@@ -104,7 +104,7 @@
 		</div>
 
 		{#if currentEpisode?.description}
-			<p class="episode-description">{currentEpisode.description}</p>
+			<p class="episode-description">{@html currentEpisode.description}</p>
 		{/if}
 
 		{#if isGoogleDriveUrl}
