@@ -27,21 +27,13 @@
 				<p>{@html data.bookContent.about}</p>
 				
 				<div class="purchase-options">
-					<div class="purchase-option">
-						<h3>Kindle Version</h3>
-						<p class="price">£{data.bookContent.purchaseOptions?.kindle?.price || '3.02'}</p>
-						<a href="https://www.amazon.co.uk/dp/B0CHJZNX2K" target="_blank" rel="noopener noreferrer" class="btn btn-purchase">Purchase Kindle</a>
-					</div>
+		
 					
 					<div class="purchase-option">
-						<h3>Second Hand Paperback</h3>
-						<a href="https://www.amazon.co.uk/s?k=The+Pastoral+Ministry+Terry+Watson&i=stripbooks" target="_blank" rel="noopener noreferrer" class="btn btn-purchase">View on Amazon</a>
+						<h3>Purchase on Amazon</h3>
+						<a href="https://amzn.eu/d/4k0fVae" target="_blank" rel="noopener noreferrer" class="btn btn-purchase">Click to view</a>
 					</div>
-					
-					<div class="purchase-option">
-						<h3>New Paperback Copies</h3>
-						<p>{@html data.bookContent.availability}</p>
-					</div>
+
 				</div>
 			</div>
 			
