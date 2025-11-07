@@ -22,18 +22,17 @@
 				<p class="large-text">{@html data.bookContent.intro}</p>
 			</div>
 			
-			<div class="section">
-				<h2>Purchase the book online</h2>
-				<p>{@html data.bookContent.about}</p>
+			<div class="section purchase-section">
+				<h2>Purchase the book</h2>
+				<p class="purchase-description">{@html data.bookContent.about}</p>
 				
-				<div class="purchase-options">
-		
-					
-					<div class="purchase-option">
-						<h3>Purchase on Amazon</h3>
-						<a href="https://amzn.eu/d/4k0fVae" target="_blank" rel="noopener noreferrer" class="btn btn-purchase">Click to view</a>
-					</div>
-
+				<div class="purchase-cta">
+					<a href="https://amzn.eu/d/4k0fVae" target="_blank" rel="noopener noreferrer" class="btn btn-purchase">
+						<svg viewBox="0 0 24 24" fill="currentColor" class="btn-icon">
+							<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+						</svg>
+						<span>Purchase on Amazon</span>
+					</a>
 				</div>
 			</div>
 			
@@ -51,7 +50,7 @@
 			<div class="section contact-section">
 				<h2>Let's Get In Touch!</h2>
 				<p>We would love to hear from you</p>
-				<a href="mailto:{data.bookContent.contactEmail || 'terryandfran.info.update@gmail.com'}" class="btn btn-contact">{data.bookContent.contactEmail || 'terryandfran.info.update@gmail.com'}</a>
+				<a href="mailto:{data.bookContent.contactEmail || 'terry.stanley.watson@gmail.com'}" class="btn btn-contact">{data.bookContent.contactEmail || 'terry.stanley.watson@gmail.com'}</a>
 			</div>
 		</div>
 	</div>
@@ -165,99 +164,53 @@
 		font-size: 1.2rem;
 	}
 
-	.cta-section {
-		background: linear-gradient(135deg, var(--cerulean-blue) 0%, var(--pacific-blue) 50%, var(--grass-green) 100%);
-		padding: 2.5rem;
-		border-radius: 16px;
+	.purchase-section {
 		text-align: center;
-		margin-top: 3rem;
-		color: white;
 	}
 
-	.cta-section p {
-		font-size: 1.2rem;
-		margin-bottom: 1.5rem;
-		color: white;
-		font-weight: 500;
+	.purchase-description {
+		font-size: 1.15rem;
+		margin-bottom: 2.5rem;
+		color: var(--text-color);
 	}
 
-	.cta-buttons {
+	.purchase-cta {
 		display: flex;
-		gap: 1rem;
 		justify-content: center;
-		flex-wrap: wrap;
-	}
-
-	.cta-section .btn {
-		background: var(--yarrow-gold);
-		color: white;
-		box-shadow: 0 4px 15px rgba(139, 98, 18, 0.4);
-	}
-
-	.cta-section .btn:hover {
-		background: var(--accent-dark);
-		box-shadow: 0 6px 20px rgba(139, 98, 18, 0.5);
-	}
-
-	.cta-section .btn-secondary {
-		background: rgba(139, 98, 18, 0.3);
-		color: white;
-		border: 2px solid var(--yarrow-gold);
-	}
-
-	.cta-section .btn-secondary:hover {
-		background: rgba(139, 98, 18, 0.4);
-		border-color: var(--yarrow-gold);
-	}
-
-	.purchase-options {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-		gap: 2rem;
 		margin-top: 2rem;
 	}
 
-	.purchase-option {
-		background: linear-gradient(135deg, rgba(67, 87, 46, 0.05) 0%, rgba(53, 78, 86, 0.05) 100%);
-		padding: 2rem;
-		border-radius: 12px;
-		border: 2px solid var(--border-color);
-		text-align: center;
-	}
-
-	.purchase-option h3 {
-		color: var(--primary-color);
-		margin-bottom: 1rem;
-		font-size: 1.3rem;
-	}
-
-	.purchase-option p {
-		margin-bottom: 1rem;
-	}
-
-	.price {
-		font-size: 1.5rem;
-		font-weight: bold;
-		color: var(--yarrow-gold);
-		margin: 1rem 0;
-	}
-
 	.btn-purchase {
-		background: var(--yarrow-gold);
+		background: linear-gradient(135deg, var(--yarrow-gold) 0%, var(--accent-dark) 100%);
 		color: white;
-		padding: 0.875rem 2rem;
-		border-radius: 8px;
+		padding: 1.25rem 3rem;
+		border-radius: 12px;
 		text-decoration: none;
-		display: inline-block;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.75rem;
 		transition: all 0.3s ease;
 		font-weight: 600;
-		box-shadow: 0 4px 15px rgba(139, 98, 18, 0.3);
+		font-size: 1.1rem;
+		box-shadow: 0 6px 20px rgba(139, 98, 18, 0.4);
+		border: none;
+		cursor: pointer;
 	}
 
 	.btn-purchase:hover {
-		background: var(--accent-dark);
-		transform: translateY(-2px);
-		box-shadow: 0 6px 20px rgba(139, 98, 18, 0.4);
+		transform: translateY(-3px);
+		box-shadow: 0 8px 25px rgba(139, 98, 18, 0.5);
+		background: linear-gradient(135deg, var(--accent-dark) 0%, var(--yarrow-gold) 100%);
+	}
+
+	.btn-purchase:active {
+		transform: translateY(-1px);
+	}
+
+	.btn-icon {
+		width: 24px;
+		height: 24px;
+		flex-shrink: 0;
 	}
 
 	.contact-section {
@@ -313,25 +266,15 @@
 			padding: 1.5rem;
 		}
 
-		.cta-section {
-			padding: 2rem 1.5rem;
+		.purchase-cta {
+			margin-top: 1.5rem;
 		}
 
-		.cta-buttons {
-			flex-direction: column;
-		}
-
-		.cta-buttons .btn {
+		.btn-purchase {
+			padding: 1rem 2rem;
+			font-size: 1rem;
 			width: 100%;
-		}
-
-		.purchase-options {
-			grid-template-columns: 1fr;
-			gap: 1.5rem;
-		}
-
-		.purchase-option {
-			padding: 1.5rem;
+			justify-content: center;
 		}
 	}
 
