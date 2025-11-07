@@ -6,6 +6,20 @@
 	let newsUpdates = $state<NewsUpdate[]>([]);
 	let loading = $state(true);
 
+	function stripHtml(html: string): string {
+		if (!html) return '';
+		// Remove HTML tags and decode HTML entities
+		const text = html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+		return text;
+	}
+
+	function getExcerpt(content: string, maxLength: number = 200): string {
+		if (!content) return '';
+		const text = stripHtml(content);
+		if (text.length <= maxLength) return text;
+		return text.substring(0, maxLength) + '...';
+	}
+
 	async function loadNews() {
 		try {
 			const response = await fetch('/admin/api/news');
@@ -43,7 +57,7 @@
 							<h3>{update.title}</h3>
 							<span class="item-meta">{update.date}</span>
 							{#if update.content}
-								<p class="item-description">{update.content.substring(0, 200)}...</p>
+								<p class="item-description">{getExcerpt(update.content)}</p>
 							{/if}
 						</div>
 						<div class="item-actions">

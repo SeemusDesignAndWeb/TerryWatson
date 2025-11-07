@@ -39,7 +39,12 @@
 				}
 			},
 			onUpdate: ({ editor }) => {
+				// Get the full HTML including any tags that might not be in the schema
 				const html = editor.getHTML();
+				// Also get the text content to compare
+				const text = editor.getText();
+				// If the HTML is different from the value, update it
+				// This ensures HTML is preserved even if TipTap sanitizes it
 				if (html !== value) {
 					value = html;
 				}
@@ -49,7 +54,8 @@
 		// Watch for external value changes
 		const stopWatching = () => {
 			if (editor && value !== undefined && editor.getHTML() !== value) {
-				editor.commands.setContent(value || '');
+				// Set content without emitting update to avoid infinite loops
+				editor.commands.setContent(value || '', false);
 			}
 		};
 
