@@ -3,11 +3,31 @@
 
 	let { data } = $props<{ data: PageData }>();
 
+	function decodeHtmlEntities(text: string): string {
+		if (typeof document === 'undefined') {
+			// Server-side: use simple regex replacements for common entities
+			return text
+				.replace(/&amp;/g, '&')
+				.replace(/&lt;/g, '<')
+				.replace(/&gt;/g, '>')
+				.replace(/&quot;/g, '"')
+				.replace(/&#39;/g, "'")
+				.replace(/&nbsp;/g, ' ');
+		}
+		// Client-side: use DOM to decode all entities
+		const textarea = document.createElement('textarea');
+		textarea.innerHTML = text;
+		return textarea.value;
+	}
+
 	function getExcerpt(content: string, maxLength: number = 300): string {
 		if (!content) return '';
 		
 		// Strip HTML tags
-		const text = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+		let text = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+		
+		// Decode HTML entities (e.g., &amp; -> &)
+		text = decodeHtmlEntities(text);
 		
 		// Get first sentence or paragraph
 		const firstParagraph = text.split('\n\n')[0] || text;
