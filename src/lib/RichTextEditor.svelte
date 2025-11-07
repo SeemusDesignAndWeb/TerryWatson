@@ -8,6 +8,7 @@
 
 	let editorElement: HTMLDivElement;
 	let editor: Editor | null = null;
+	let isInitialized = $state(false);
 
 	onMount(() => {
 		if (!editorElement) return;
@@ -38,24 +39,32 @@
 					'data-placeholder': placeholder
 				}
 			},
+			onCreate: ({ editor }) => {
+				// When editor is created, ensure content is loaded
+				if (value && value !== editor.getHTML()) {
+					editor.commands.setContent(value, false);
+				}
+				isInitialized = true;
+			},
 			onUpdate: ({ editor }) => {
-				// Get the full HTML including any tags that might not be in the schema
+				// Get the HTML from TipTap (this will be sanitized to match schema)
 				const html = editor.getHTML();
-				// Also get the text content to compare
-				const text = editor.getText();
-				// If the HTML is different from the value, update it
-				// This ensures HTML is preserved even if TipTap sanitizes it
+				// Update the value with the sanitized HTML
 				if (html !== value) {
 					value = html;
 				}
 			}
 		});
 
-		// Watch for external value changes
+		// Watch for external value changes (when content is loaded from backend)
 		const stopWatching = () => {
-			if (editor && value !== undefined && editor.getHTML() !== value) {
-				// Set content without emitting update to avoid infinite loops
-				editor.commands.setContent(value || '', false);
+			if (editor && isInitialized && value !== undefined) {
+				const currentHtml = editor.getHTML();
+				// Only update if the value has actually changed from outside
+				if (value !== currentHtml) {
+					// Set content without emitting update to avoid infinite loops
+					editor.commands.setContent(value || '', false);
+				}
 			}
 		};
 
