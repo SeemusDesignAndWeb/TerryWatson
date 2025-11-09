@@ -48,7 +48,7 @@
 		<nav class="nav">
 			<div class="nav-brand">
 				<a href="/" class="brand-link" class:hidden={isHomePage && !isScrolled}>
-					<h1>The home of Terry Watson</h1>
+					<h1>Terry and Frances Watson</h1>
 					<span class="tagline">News, audio, and updates</span>
 				</a>
 			</div>

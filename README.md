@@ -82,10 +82,44 @@ src/
 
 ## Deployment
 
+**⚠️ IMPORTANT: Git pushes do NOT automatically deploy to production**
+
 This site can be deployed to any platform that supports Node.js, such as:
 - Vercel
 - Netlify
 - Cloudflare Pages
+- Railway
 - Any Node.js hosting service
 
-Simply run `npm run build` and deploy the `build` directory (or follow platform-specific instructions).
+### Manual Deployment Process
+
+1. **Build the site locally:**
+   ```bash
+   npm run build
+   ```
+
+2. **Test the build:**
+   ```bash
+   npm run preview
+   ```
+
+3. **Deploy manually** through your hosting platform's dashboard or CLI
+   - Never set up automatic deployments from Git
+   - Always review changes before deploying
+   - Test locally before deploying to production
+
+### Protecting Production Content
+
+- Content files (`src/lib/data/*.json`) are version controlled
+- Changes to content should be made through the admin interface
+- Git pushes update the codebase, but deployment is manual
+- Always backup production data before major updates
+
+### Deployment Checklist
+
+- [ ] Test changes locally with `npm run dev`
+- [ ] Build and preview with `npm run build && npm run preview`
+- [ ] Review all changes
+- [ ] Backup production data if needed
+- [ ] Deploy manually through hosting platform
+- [ ] Verify deployment after going live

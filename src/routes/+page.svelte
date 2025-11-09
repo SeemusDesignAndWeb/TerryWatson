@@ -54,7 +54,7 @@
 	<div class="hero-container">
 		<div class="hero-content">
 			<div class="hero-text">
-				<h1 class="hero-title">The home of<br/>Terry Watson</h1>
+				<h1 class="hero-title">Terry and<br/>Frances Watson</h1>
 				{#if latestExcerpt}
 					<div class="hero-excerpt">
 						<p class="hero-excerpt-text">{latestExcerpt}</p>
