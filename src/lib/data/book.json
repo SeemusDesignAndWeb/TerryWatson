@@ -1,0 +1,26 @@
+{
+  "intro": "By Terry & Frances Watson",
+  "about": "The Pastoral Ministry is available in paperback or Kindle.",
+  "topics": [
+    "Pastoral care and leadership",
+    "Itinerant preaching ministry",
+    "Building and nurturing Christian communities",
+    "Mission work and cross-cultural ministry",
+    "Teaching and discipleship",
+    "Practical ministry wisdom"
+  ],
+  "availability": "New copies available from Terry & Frances Watson, contact us below.",
+  "purchaseOptions": {
+    "kindle": {
+      "price": "£3.02",
+      "description": "Kindle version"
+    },
+    "paperbackUsed": {
+      "description": "Second hand paperback version"
+    },
+    "paperbackNew": {
+      "description": "New copies available from Terry & Frances Watson"
+    }
+  },
+  "contactEmail": "terry.stanley.watson@gmail.com"
+}
