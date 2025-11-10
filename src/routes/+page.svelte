@@ -1,7 +1,26 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
 	let { data } = $props<{ data: PageData }>();
+
+	// Image carousel setup
+	let images = $state([
+		{ src: '/images/terryandfranwatson_beach.png', alt: 'Terry & Fran Watson' },
+		{ src: '/images/terryandfranwatson_500.png', alt: 'Terry & Fran Watson' },
+		{ src: '/images/terryandfranwatson_earlyyears.png', alt: 'Terry & Fran Watson' }
+		// Add more images here as needed
+	]);
+
+	let currentIndex = $state(0);
+
+	onMount(() => {
+		const interval = setInterval(() => {
+			currentIndex = (currentIndex + 1) % images.length;
+		}, 5000); // Change image every 5 seconds
+
+		return () => clearInterval(interval);
+	});
 
 	function decodeHtmlEntities(text: string): string {
 		if (typeof document === 'undefined') {
@@ -70,7 +89,16 @@
 			</div>
 		</div>
 		<div class="hero-image">
-			<img src="/images/terryandfranwatson_500.png" alt="Terry & Fran Watson" />
+			<div class="image-carousel">
+				{#each images as image, index}
+					<img
+						src={image.src}
+						alt={image.alt}
+						class="carousel-image"
+						class:active={index === currentIndex}
+					/>
+				{/each}
+			</div>
 		</div>
 	</div>
 </section>
@@ -196,13 +224,31 @@
 		justify-content: center;
 	}
 
-	.hero-image img {
+	.image-carousel {
+		position: relative;
 		width: 100%;
-		height: auto;
 		border-radius: 16px;
+		overflow: hidden;
 		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-		object-fit: cover;
+		min-height: 400px;
 		max-height: 600px;
+	}
+
+	.carousel-image {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		opacity: 0;
+		transition: opacity 1s ease-in-out;
+		pointer-events: none;
+	}
+
+	.carousel-image.active {
+		opacity: 1;
+		z-index: 1;
 	}
 
 	.hero .btn {
@@ -306,7 +352,7 @@
 			order: -1;
 		}
 
-		.hero-image img {
+		.carousel-image {
 			max-height: 400px;
 		}
 
@@ -340,7 +386,7 @@
 			width: 100%;
 		}
 
-		.hero-image img {
+		.carousel-image {
 			max-height: 300px;
 		}
 
