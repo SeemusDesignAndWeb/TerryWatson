@@ -46,9 +46,50 @@ When you deploy:
 ## Content Management
 
 - Content is managed through the admin interface at `/admin`
-- Content changes are saved to `src/lib/data/*.json` files
-- These files are version controlled in Git
+- Content changes are saved to persistent storage (Railway volumes)
+- Default/seed data is stored in `src/lib/data/*.json` files (version controlled in Git)
+- Production content persists across deployments via Railway volumes
 - Production content should be backed up before major updates
+
+## Railway Volume Setup (Production)
+
+This application uses Railway volumes for persistent data storage. The data persists across deployments.
+
+### Step 1: Create Railway Volume
+
+1. Go to your Railway project → Service
+2. Click **"New"** → **"Volume"**
+3. **Name:** `data-storage` (or any descriptive name)
+4. **Mount Path:** `/data` (must be absolute path)
+5. Click **"Add"**
+
+### Step 2: Configure Environment Variables
+
+In Railway, go to your service → **Variables** tab and add:
+
+```
+EPISODES_DB_PATH=/data/episodes.json
+NEWS_DB_PATH=/data/news.json
+BOOK_DB_PATH=/data/book.json
+AMEVA_DB_PATH=/data/ameva.json
+```
+
+### Step 3: How It Works
+
+- **Development:** Uses relative paths (`./data/*.json`) - files in `src/lib/data/`
+- **Production:** Uses absolute paths (`/data/*.json`) - files in Railway volume
+- **Auto-initialization:** On first read, if volume file doesn't exist, it copies from git-tracked defaults
+- **Persistence:** All writes go to the volume, so data survives deployments
+
+### Step 4: Verify Setup
+
+After deployment, check Railway logs for:
+```
+[DB] Initializing episodes.json from git version...
+[DB] Successfully initialized episodes.json
+```
+
+Make a test change via admin panel, then redeploy to verify data persists.
 
 ## Preventing Auto-Deployment
 

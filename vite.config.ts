@@ -48,19 +48,43 @@ function conditionalDataCopy(): Plugin {
 			}
 		},
 		writeBundle() {
+			// Re-check for existing files in persistent location (in case buildStart was too early)
+			// This is the critical check - persistent location survives deployments
+			if (existsSync(persistentDataDir)) {
+				try {
+					const files = readdirSync(persistentDataDir);
+					files
+						.filter(file => file.endsWith('.json'))
+						.forEach(file => {
+							if (!existingFiles.has(file)) {
+								const filePath = join(persistentDataDir, file);
+								try {
+									existingFiles.set(file, readFileSync(filePath, 'utf-8'));
+									console.log(`📦 Found existing ${file} in persistent location`);
+								} catch {
+									// Ignore if can't read
+								}
+							}
+						});
+				} catch (error) {
+					// Directory might not exist, that's okay
+				}
+			}
+			
 			const dataDir = join(process.cwd(), 'src/lib/data');
 			
+			// Ensure destination directories exist
+			if (!existsSync(buildDataDir)) {
+				mkdirSync(buildDataDir, { recursive: true });
+			}
+			if (!existsSync(persistentDataDir)) {
+				mkdirSync(persistentDataDir, { recursive: true });
+			}
+			
 			if (!existsSync(dataDir)) {
-				// No source files, but restore existing if we have them
+				// No source files (gitignored), but restore existing if we have them
 				if (existingFiles.size > 0) {
 					try {
-						if (!existsSync(buildDataDir)) {
-							mkdirSync(buildDataDir, { recursive: true });
-						}
-						if (!existsSync(persistentDataDir)) {
-							mkdirSync(persistentDataDir, { recursive: true });
-						}
-						
 						existingFiles.forEach((content, file) => {
 							// Write to both locations for redundancy
 							const buildPath = join(buildDataDir, file);
@@ -73,19 +97,13 @@ function conditionalDataCopy(): Plugin {
 					} catch (error) {
 						console.warn('Could not restore existing data files:', error);
 					}
+				} else {
+					console.warn('⚠️  No source data files found and no existing files to restore. Data files may be empty.');
 				}
 				return;
 			}
 
 			try {
-				// Ensure destination directories exist
-				if (!existsSync(buildDataDir)) {
-					mkdirSync(buildDataDir, { recursive: true });
-				}
-				if (!existsSync(persistentDataDir)) {
-					mkdirSync(persistentDataDir, { recursive: true });
-				}
-
 				const sourceFiles = readdirSync(dataDir).filter(file => file.endsWith('.json'));
 				
 				sourceFiles.forEach(file => {
