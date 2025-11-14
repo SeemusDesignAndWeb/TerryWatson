@@ -1,5 +1,10 @@
 import type { Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
+import { config } from 'dotenv';
+import { resolve } from 'path';
+
+// Load .env file explicitly
+config({ path: resolve(process.cwd(), '.env') });
 
 // Simple authentication - in production, use environment variables
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123'; // Change this!

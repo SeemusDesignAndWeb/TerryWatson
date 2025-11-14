@@ -4,22 +4,18 @@
 
 	let { data } = $props<{ data: PageData }>();
 
-	// Image carousel setup
-	let images = $state([
-		{ src: '/images/terryandfranwatson_beach.png', alt: 'Terry & Fran Watson' },
-		{ src: '/images/terryandfranwatson_500.png', alt: 'Terry & Fran Watson' },
-		{ src: '/images/terryandfranwatson_earlyyears.png', alt: 'Terry & Fran Watson' }
-		// Add more images here as needed
-	]);
-
+	// Image carousel setup - load from data store
+	let images = $derived(data.carouselImages || []);
 	let currentIndex = $state(0);
 
 	onMount(() => {
-		const interval = setInterval(() => {
-			currentIndex = (currentIndex + 1) % images.length;
-		}, 5000); // Change image every 5 seconds
+		if (images.length > 0) {
+			const interval = setInterval(() => {
+				currentIndex = (currentIndex + 1) % images.length;
+			}, 5000); // Change image every 5 seconds
 
-		return () => clearInterval(interval);
+			return () => clearInterval(interval);
+		}
 	});
 
 	function decodeHtmlEntities(text: string): string {
@@ -89,16 +85,24 @@
 			</div>
 		</div>
 		<div class="hero-image">
-			<div class="image-carousel">
-				{#each images as image, index}
-					<img
-						src={image.src}
-						alt={image.alt}
-						class="carousel-image"
-						class:active={index === currentIndex}
-					/>
-				{/each}
-			</div>
+			{#if images.length > 0}
+				<div class="image-carousel">
+					{#each images as image, index}
+						<img
+							src={image.src}
+							alt={image.alt}
+							class="carousel-image"
+							class:active={index === currentIndex}
+						/>
+					{/each}
+				</div>
+			{:else}
+				<div class="image-carousel">
+					<div class="carousel-placeholder">
+						<p>No carousel images available</p>
+					</div>
+				</div>
+			{/if}
 		</div>
 	</div>
 </section>
@@ -249,6 +253,17 @@
 	.carousel-image.active {
 		opacity: 1;
 		z-index: 1;
+	}
+
+	.carousel-placeholder {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: rgba(255, 255, 255, 0.1);
+		color: rgba(255, 255, 255, 0.7);
+		font-size: 1.1rem;
 	}
 
 	.hero .btn {

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "1",
+    "src": "/images/terryandfranwatson_beach.png",
+    "alt": "Terry & Fran Watson",
+    "order": 0
+  },
+  {
+    "id": "2",
+    "src": "/images/terryandfranwatson_500.png",
+    "alt": "Terry & Fran Watson",
+    "order": 1
+  },
+  {
+    "id": "3",
+    "src": "/images/terryandfranwatson_earlyyears.png",
+    "alt": "Terry & Fran Watson",
+    "order": 2
+  }
+]

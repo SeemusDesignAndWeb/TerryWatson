@@ -40,6 +40,14 @@
 	{:else}
 		<div class="admin-content">
 			<div class="dashboard-grid">
+				<a href="/admin/carousel" class="dashboard-card">
+					<div class="card-icon">🖼️</div>
+					<h2>Carousel Images</h2>
+					<p class="card-count">Homepage Carousel</p>
+					<p class="card-description">Manage the images displayed in the carousel on the homepage.</p>
+					<span class="card-link">Manage Carousel →</span>
+				</a>
+
 				<a href="/admin/episodes" class="dashboard-card">
 					<div class="card-icon">🎙️</div>
 					<h2>Audio Episodes</h2>

@@ -10,23 +10,43 @@
 		loading = true;
 		error = '';
 
+		// Trim password to handle any whitespace
+		const trimmedPassword = password.trim();
+
+		if (!trimmedPassword) {
+			error = 'Please enter a password';
+			loading = false;
+			return;
+		}
+
 		try {
 			const response = await fetch('/admin/api/login', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ password })
+				body: JSON.stringify({ password: trimmedPassword }),
+				credentials: 'include' // Ensure cookies are sent
 			});
+
+			if (!response.ok) {
+				const data = await response.json().catch(() => ({}));
+				error = data.error || `Login failed (${response.status})`;
+				loading = false;
+				return;
+			}
 
 			const data = await response.json();
 
 			if (data.success) {
-				goto('/admin');
+				// Small delay to ensure cookie is set
+				await new Promise(resolve => setTimeout(resolve, 100));
+				window.location.href = '/admin'; // Use window.location for full page reload
 			} else {
 				error = data.error || 'Invalid password';
 			}
 		} catch (err) {
+			console.error('Login error:', err);
 			error = 'An error occurred. Please try again.';
 		} finally {
 			loading = false;
@@ -81,7 +101,7 @@
 		justify-content: center;
 		background: linear-gradient(135deg, #0a1628 0%, #1a2d42 50%, #0f2143 100%);
 		padding: 2rem;
-		padding-top: calc(2rem + 100px); /* Account for fixed navbar - login uses main layout */
+		box-sizing: border-box;
 	}
 
 	.login-card {
@@ -180,7 +200,6 @@
 	@media (max-width: 768px) {
 		.login-container {
 			padding: 1rem;
-			padding-top: calc(1rem + 100px); /* Account for fixed navbar */
 		}
 
 		.login-card {

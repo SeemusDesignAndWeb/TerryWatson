@@ -1,15 +1,16 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
-import type { Episode, NewsUpdate, AmevaContent, BookContent } from './types';
+import type { Episode, NewsUpdate, AmevaContent, BookContent, CarouselImage } from './types';
 
 // Re-export types for convenience (server-side only)
-export type { Episode, NewsUpdate, AmevaContent, BookContent };
+export type { Episode, NewsUpdate, AmevaContent, BookContent, CarouselImage };
 
 // Environment variable configuration
 const EPISODES_DB_PATH = process.env.EPISODES_DB_PATH || './data/episodes.json';
 const NEWS_DB_PATH = process.env.NEWS_DB_PATH || './data/news.json';
 const BOOK_DB_PATH = process.env.BOOK_DB_PATH || './data/book.json';
 const AMEVA_DB_PATH = process.env.AMEVA_DB_PATH || './data/ameva.json';
+const CAROUSEL_DB_PATH = process.env.CAROUSEL_DB_PATH || './data/carousel.json';
 
 // Git-tracked default paths (for auto-initialization)
 const GIT_DATA_DIR = join(process.cwd(), 'src', 'lib', 'data');
@@ -192,5 +193,21 @@ export function getBookContent(): BookContent {
 
 export function saveBookContent(content: BookContent): void {
 	writeDataFile(BOOK_DB_PATH, 'book.json', content);
+}
+
+// Carousel functions
+export function getCarouselImages(): CarouselImage[] {
+	const defaultValue: CarouselImage[] = [
+		{ id: '1', src: '/images/terryandfranwatson_beach.png', alt: 'Terry & Fran Watson', order: 0 },
+		{ id: '2', src: '/images/terryandfranwatson_500.png', alt: 'Terry & Fran Watson', order: 1 },
+		{ id: '3', src: '/images/terryandfranwatson_earlyyears.png', alt: 'Terry & Fran Watson', order: 2 }
+	];
+	const images = readDataFile<CarouselImage[]>(CAROUSEL_DB_PATH, 'carousel.json', defaultValue);
+	// Sort by order if present
+	return images.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+}
+
+export function saveCarouselImages(images: CarouselImage[]): void {
+	writeDataFile(CAROUSEL_DB_PATH, 'carousel.json', images);
 }
 

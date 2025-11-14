@@ -42,3 +42,10 @@ export interface BookContent {
 	contactEmail?: string;
 }
 
+export interface CarouselImage {
+	id: string;
+	src: string;
+	alt: string;
+	order?: number;
+}
+
