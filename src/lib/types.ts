@@ -42,10 +42,19 @@ export interface BookContent {
 	contactEmail?: string;
 }
 
-export interface CarouselImage {
+export interface ImageLibraryItem {
 	id: string;
 	src: string;
 	alt: string;
+	uploadedAt?: string;
+}
+
+export interface CarouselImage {
+	imageId: string; // Reference to ImageLibraryItem.id
 	order?: number;
+}
+
+export interface CarouselSettings {
+	intervalSeconds: number; // Time in seconds between image changes
 }
 

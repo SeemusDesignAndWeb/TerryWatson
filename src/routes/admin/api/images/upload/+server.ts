@@ -34,7 +34,7 @@ export const POST: RequestHandler = async ({ request }) => {
 				.upload_stream(
 					{
 						resource_type: 'image',
-						folder: 'carousel',
+						folder: 'images',
 						transformation: [
 							{ width: 1200, height: 800, crop: 'limit', quality: 'auto' }
 						]

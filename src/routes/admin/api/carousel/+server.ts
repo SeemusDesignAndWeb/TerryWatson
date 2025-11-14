@@ -13,26 +13,24 @@ export const GET: RequestHandler = async () => {
 
 export const PUT: RequestHandler = async ({ request }) => {
 	try {
-		const images = await request.json();
+		const items = await request.json();
 		
-		// Validate images array
-		if (!Array.isArray(images)) {
-			return json({ error: 'Images must be an array' }, { status: 400 });
+		// Validate items array
+		if (!Array.isArray(items)) {
+			return json({ error: 'Items must be an array' }, { status: 400 });
 		}
 
-		// Ensure all images have required fields and IDs
-		const validatedImages = images.map((img, index) => ({
-			id: img.id || generateId(),
-			src: img.src || '',
-			alt: img.alt || 'Carousel image',
-			order: img.order !== undefined ? img.order : index
-		}));
+		// Ensure all items have required fields
+		const validatedItems = items.map((item, index) => ({
+			imageId: item.imageId || item.id || '',
+			order: item.order !== undefined ? item.order : index
+		})).filter(item => item.imageId); // Remove items without imageId
 
-		saveCarouselImages(validatedImages);
-		return json({ success: true, images: validatedImages });
+		saveCarouselImages(validatedItems);
+		return json({ success: true, items: validatedItems });
 	} catch (error: any) {
-		console.error('Error saving carousel images:', error);
-		return json({ error: error.message || 'Failed to save images' }, { status: 500 });
+		console.error('Error saving carousel items:', error);
+		return json({ error: error.message || 'Failed to save carousel' }, { status: 500 });
 	}
 };
 

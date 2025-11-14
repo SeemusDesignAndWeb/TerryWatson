@@ -6,13 +6,15 @@
 
 	// Image carousel setup - load from data store
 	let images = $derived(data.carouselImages || []);
+	let carouselSettings = $derived(data.carouselSettings || { intervalSeconds: 5 });
 	let currentIndex = $state(0);
 
 	onMount(() => {
-		if (images.length > 0) {
+		if (images && images.length > 0) {
+			const intervalMs = (carouselSettings.intervalSeconds || 5) * 1000;
 			const interval = setInterval(() => {
 				currentIndex = (currentIndex + 1) % images.length;
-			}, 5000); // Change image every 5 seconds
+			}, intervalMs);
 
 			return () => clearInterval(interval);
 		}
@@ -85,7 +87,7 @@
 			</div>
 		</div>
 		<div class="hero-image">
-			{#if images.length > 0}
+			{#if images && images.length > 0}
 				<div class="image-carousel">
 					{#each images as image, index}
 						<img

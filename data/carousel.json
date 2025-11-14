@@ -1,20 +1,26 @@
 [
   {
-    "id": "1",
-    "src": "/images/terryandfranwatson_beach.png",
-    "alt": "Terry & Fran Watson",
+    "imageId": "1",
     "order": 0
   },
   {
-    "id": "2",
-    "src": "/images/terryandfranwatson_500.png",
-    "alt": "Terry & Fran Watson",
+    "imageId": "2",
     "order": 1
   },
   {
-    "id": "3",
-    "src": "/images/terryandfranwatson_earlyyears.png",
-    "alt": "Terry & Fran Watson",
+    "imageId": "3",
     "order": 2
+  },
+  {
+    "imageId": "mhytcyfzeyrg2i624fs",
+    "order": 3
+  },
+  {
+    "imageId": "mhytd477iz5lj6gxsjm",
+    "order": 4
+  },
+  {
+    "imageId": "mhytdadxohk1ukbvvb8",
+    "order": 5
   }
 ]

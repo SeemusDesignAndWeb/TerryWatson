@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { v2 as cloudinary } from 'cloudinary';
+import { Buffer } from 'buffer';
 
 // Configure Cloudinary
 // Note: CLOUDINARY_CLOUD_NAME should be set in environment variables
@@ -22,8 +23,6 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		// Convert file to buffer
 		const arrayBuffer = await file.arrayBuffer();
-		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const { Buffer } = require('buffer');
 		const buffer = Buffer.from(arrayBuffer);
 
 		// Upload to Cloudinary

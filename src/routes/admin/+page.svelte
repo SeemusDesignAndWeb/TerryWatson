@@ -40,11 +40,19 @@
 	{:else}
 		<div class="admin-content">
 			<div class="dashboard-grid">
-				<a href="/admin/carousel" class="dashboard-card">
+				<a href="/admin/images" class="dashboard-card">
 					<div class="card-icon">🖼️</div>
-					<h2>Carousel Images</h2>
-					<p class="card-count">Homepage Carousel</p>
-					<p class="card-description">Manage the images displayed in the carousel on the homepage.</p>
+					<h2>Image Library</h2>
+					<p class="card-count">Upload & Manage</p>
+					<p class="card-description">Upload and manage images in your library. Images can then be selected for the carousel.</p>
+					<span class="card-link">Manage Images →</span>
+				</a>
+
+				<a href="/admin/carousel" class="dashboard-card">
+					<div class="card-icon">🎠</div>
+					<h2>Carousel</h2>
+					<p class="card-count">Homepage Display</p>
+					<p class="card-description">Select which images from your library to display in the homepage carousel.</p>
 					<span class="card-link">Manage Carousel →</span>
 				</a>
 

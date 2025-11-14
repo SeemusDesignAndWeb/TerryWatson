@@ -1,97 +1,89 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { CarouselImage } from '$lib/types';
+	import type { CarouselImage, CarouselSettings, ImageLibraryItem } from '$lib/types';
 
-	let images = $state<CarouselImage[]>([]);
+	let imageLibrary = $state<ImageLibraryItem[]>([]);
+	let carouselItems = $state<CarouselImage[]>([]);
+	let settings = $state<CarouselSettings>({ intervalSeconds: 5 });
 	let loading = $state(true);
-	let uploading = $state(false);
-	let uploadProgress = $state('');
 	let error = $state('');
 	let success = $state('');
+	let savingSettings = $state(false);
+	let showImageModal = $state(false);
 
-	async function loadImages() {
+	async function loadData() {
 		try {
-			const response = await fetch('/admin/api/carousel');
-			images = await response.json();
-		} catch (error) {
-			console.error('Error loading carousel images:', error);
-			error = 'Failed to load carousel images';
+			const [libraryResponse, carouselResponse, settingsResponse] = await Promise.all([
+				fetch('/admin/api/images'),
+				fetch('/admin/api/carousel'),
+				fetch('/admin/api/carousel/settings')
+			]);
+			imageLibrary = await libraryResponse.json();
+			carouselItems = await carouselResponse.json();
+			settings = await settingsResponse.json();
+		} catch (err) {
+			console.error('Error loading carousel data:', err);
+			error = 'Failed to load carousel data';
 		} finally {
 			loading = false;
 		}
 	}
 
-	async function handleFileUpload(file: File) {
-		if (!file) return;
-		
-		if (!file.type.startsWith('image/')) {
-			error = 'Please upload an image file';
-			return;
+	async function loadImageLibrary() {
+		try {
+			const response = await fetch('/admin/api/images');
+			imageLibrary = await response.json();
+		} catch (err) {
+			console.error('Error loading image library:', err);
 		}
+	}
 
-		uploading = true;
-		uploadProgress = 'Uploading image to Cloudinary...';
+	function openImageModal() {
+		loadImageLibrary();
+		showImageModal = true;
+	}
+
+	function closeImageModal() {
+		showImageModal = false;
+	}
+
+	async function saveSettings() {
+		savingSettings = true;
 		error = '';
 		success = '';
 
 		try {
-			const formData = new FormData();
-			formData.append('image', file);
-
-			const response = await fetch('/admin/api/carousel/upload', {
-				method: 'POST',
-				body: formData
+			const response = await fetch('/admin/api/carousel/settings', {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(settings)
 			});
 
-			const data = await response.json();
-
-			if (response.ok && data.url) {
-				// Add new image to the list
-				const newImage: CarouselImage = {
-					id: Date.now().toString(36) + Math.random().toString(36).substring(2),
-					src: data.url,
-					alt: file.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' '),
-					order: images.length
-				};
-				
-				const updatedImages = [...images, newImage];
-				await saveImages(updatedImages);
-				uploadProgress = 'Upload complete!';
-				success = 'Image uploaded and added to carousel';
+			if (response.ok) {
+				success = 'Settings saved successfully';
 				setTimeout(() => {
-					uploadProgress = '';
 					success = '';
 				}, 3000);
 			} else {
-				error = data.error || 'Upload failed';
+				const data = await response.json();
+				error = data.error || 'Failed to save settings';
 			}
 		} catch (err) {
-			error = 'Failed to upload image';
+			error = 'Failed to save settings';
 		} finally {
-			uploading = false;
+			savingSettings = false;
 		}
 	}
 
-	function handleFileChange(e: Event) {
-		const target = e.target as HTMLInputElement;
-		const file = target.files?.[0];
-		if (file) {
-			handleFileUpload(file);
-			// Reset input
-			target.value = '';
-		}
-	}
-
-	async function saveImages(updatedImages: CarouselImage[]) {
+	async function saveCarousel() {
 		try {
 			const response = await fetch('/admin/api/carousel', {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(updatedImages)
+				body: JSON.stringify(carouselItems)
 			});
 
 			if (response.ok) {
-				images = updatedImages;
 				success = 'Carousel updated successfully';
 				setTimeout(() => {
 					success = '';
@@ -104,48 +96,58 @@
 		}
 	}
 
-	async function deleteImage(index: number) {
-		if (confirm('Delete this image from the carousel?')) {
-			const updatedImages = images.filter((_, i) => i !== index);
-			// Reorder remaining images
-			updatedImages.forEach((img, i) => {
-				img.order = i;
+	function toggleImageInCarousel(imageId: string) {
+		const existingIndex = carouselItems.findIndex(item => item.imageId === imageId);
+		
+		if (existingIndex >= 0) {
+			// Remove from carousel
+			carouselItems = carouselItems.filter(item => item.imageId !== imageId);
+			// Reorder remaining items
+			carouselItems.forEach((item, index) => {
+				item.order = index;
 			});
-			await saveImages(updatedImages);
+		} else {
+			// Add to carousel
+			carouselItems = [...carouselItems, { imageId, order: carouselItems.length }];
 		}
+		
+		saveCarousel();
+	}
+
+	function isInCarousel(imageId: string): boolean {
+		return carouselItems.some(item => item.imageId === imageId);
 	}
 
 	function moveImage(index: number, direction: 'up' | 'down') {
 		if (
 			(direction === 'up' && index === 0) ||
-			(direction === 'down' && index === images.length - 1)
+			(direction === 'down' && index === carouselItems.length - 1)
 		) {
 			return;
 		}
 
 		const newIndex = direction === 'up' ? index - 1 : index + 1;
-		const updatedImages = [...images];
-		[updatedImages[index], updatedImages[newIndex]] = [
-			updatedImages[newIndex],
-			updatedImages[index]
+		const updatedItems = [...carouselItems];
+		[updatedItems[index], updatedItems[newIndex]] = [
+			updatedItems[newIndex],
+			updatedItems[index]
 		];
 		
 		// Update order
-		updatedImages.forEach((img, i) => {
-			img.order = i;
+		updatedItems.forEach((item, i) => {
+			item.order = i;
 		});
 		
-		saveImages(updatedImages);
+		carouselItems = updatedItems;
+		saveCarousel();
 	}
 
-	function updateAltText(index: number, newAlt: string) {
-		const updatedImages = [...images];
-		updatedImages[index].alt = newAlt;
-		saveImages(updatedImages);
+	function getCarouselImageData(imageId: string): ImageLibraryItem | undefined {
+		return imageLibrary.find(img => img.id === imageId);
 	}
 
 	onMount(() => {
-		loadImages();
+		loadData();
 	});
 </script>
 
@@ -157,17 +159,8 @@
 	<header class="admin-header">
 		<h1>Carousel Images</h1>
 		<div class="header-actions">
-			<label for="image-upload" class="btn" class:uploading>
-				{uploading ? 'Uploading...' : 'Upload Image'}
-			</label>
-			<input
-				id="image-upload"
-				type="file"
-				accept="image/*"
-				onchange={handleFileChange}
-				style="display: none;"
-				disabled={uploading}
-			/>
+			<button class="btn" onclick={openImageModal}>Add Image</button>
+			<a href="/admin/images" class="btn btn-secondary">Manage Image Library</a>
 		</div>
 	</header>
 
@@ -179,74 +172,154 @@
 		<div class="message success">{success}</div>
 	{/if}
 
-	{#if uploadProgress}
-		<div class="message info">{uploadProgress}</div>
-	{/if}
-
 	{#if loading}
-		<div class="loading">Loading carousel images...</div>
+		<div class="loading">Loading carousel data...</div>
 	{:else}
 		<div class="admin-content">
-			<p class="help-text">
-				Manage the images displayed in the carousel on the homepage. Images are automatically rotated every 5 seconds.
-			</p>
+			<div class="settings-section">
+				<h2>Carousel Settings</h2>
+				<div class="settings-form">
+					<div class="form-group">
+						<label for="interval">
+							Image Change Interval (seconds)
+							<span class="help-text-small">Time between image changes (1-60 seconds)</span>
+						</label>
+						<div class="input-with-button">
+							<input
+								id="interval"
+								type="number"
+								min="1"
+								max="60"
+								bind:value={settings.intervalSeconds}
+							/>
+							<button
+								class="btn-small"
+								onclick={saveSettings}
+								disabled={savingSettings}
+							>
+								{savingSettings ? 'Saving...' : 'Save'}
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
 
-			<div class="images-grid">
-				{#each images as image, index}
-					<div class="image-card">
-						<div class="image-preview">
-							<img src={image.src} alt={image.alt} />
-							<div class="image-overlay">
-								<span class="image-order">#{index + 1}</span>
-							</div>
-						</div>
-						<div class="image-controls">
-							<div class="control-group">
-								<label>Alt Text:</label>
-								<input
-									type="text"
-									value={image.alt}
-									onblur={(e) => updateAltText(index, e.target.value)}
-									placeholder="Image description"
-								/>
-							</div>
-							<div class="button-group">
-								<button
-									class="btn-small"
-									onclick={() => moveImage(index, 'up')}
-									disabled={index === 0}
-									title="Move up"
-								>
-									↑
-								</button>
-								<button
-									class="btn-small"
-									onclick={() => moveImage(index, 'down')}
-									disabled={index === images.length - 1}
-									title="Move down"
-								>
-									↓
-								</button>
-								<button
-									class="btn-small btn-danger"
-									onclick={() => deleteImage(index)}
-									title="Delete"
-								>
-									Delete
-								</button>
-							</div>
-						</div>
+			<div class="carousel-section">
+				<h2>Selected Carousel Images</h2>
+				<p class="help-text">
+					Images currently displayed in the carousel. Use the buttons below to reorder or remove images.
+				</p>
+
+				{#if carouselItems.length > 0}
+					<div class="carousel-items">
+						{#each carouselItems as item, index}
+							{@const imageData = getCarouselImageData(item.imageId)}
+							{#if imageData}
+								<div class="carousel-item-card">
+									<div class="item-preview">
+										<img src={imageData.src} alt={imageData.alt} />
+										<span class="item-order">#{index + 1}</span>
+									</div>
+									<div class="item-info">
+										<p class="item-alt">{imageData.alt}</p>
+									</div>
+									<div class="item-actions">
+										<button
+											class="btn-small"
+											onclick={() => moveImage(index, 'up')}
+											disabled={index === 0}
+											title="Move up"
+										>
+											↑
+										</button>
+										<button
+											class="btn-small"
+											onclick={() => moveImage(index, 'down')}
+											disabled={index === carouselItems.length - 1}
+											title="Move down"
+										>
+											↓
+										</button>
+										<button
+											class="btn-small btn-danger"
+											onclick={() => toggleImageInCarousel(item.imageId)}
+											title="Remove from carousel"
+										>
+											Remove
+										</button>
+									</div>
+								</div>
+							{/if}
+						{/each}
 					</div>
 				{:else}
 					<div class="empty-state">
-						<p>No images in carousel yet.</p>
-						<p>Upload your first image to get started.</p>
+						<p>No images selected for carousel.</p>
+						<p>Click "Add Image" to select images from your library.</p>
 					</div>
-				{/each}
+				{/if}
 			</div>
 		</div>
 	{/if}
 </div>
+
+<!-- Image Selection Modal -->
+{#if showImageModal}
+	<div 
+		class="modal-overlay" 
+		onclick={closeImageModal}
+		onkeydown={(e) => e.key === 'Escape' && closeImageModal()}
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby="modal-title"
+		tabindex="-1"
+	>
+		<div 
+			class="modal-content" 
+			onclick={(e) => e.stopPropagation()}
+			role="presentation"
+		>
+			<div class="modal-header">
+				<h2 id="modal-title">Select Images for Carousel</h2>
+				<button class="modal-close" onclick={closeImageModal} aria-label="Close modal">×</button>
+			</div>
+			<div class="modal-body">
+				{#if imageLibrary.length > 0}
+					<div class="modal-library-grid">
+						{#each imageLibrary as image}
+							<button
+								type="button"
+								class="modal-library-item"
+								class:selected={isInCarousel(image.id)}
+								onclick={() => {
+									toggleImageInCarousel(image.id);
+								}}
+							>
+								<div class="modal-library-preview">
+									<img src={image.src} alt={image.alt} />
+									{#if isInCarousel(image.id)}
+										<div class="modal-selected-badge">✓ Selected</div>
+									{/if}
+								</div>
+								<div class="modal-library-info">
+									<p class="modal-library-alt">{image.alt}</p>
+								</div>
+							</button>
+						{/each}
+					</div>
+				{:else}
+					<div class="modal-empty-state">
+						<p>No images in library.</p>
+						<p><a href="/admin/images">Upload images</a> to get started.</p>
+					</div>
+				{/if}
+			</div>
+			<div class="modal-footer">
+				<button class="btn" onclick={closeImageModal}>Done</button>
+			</div>
+		</div>
+	</div>
+{/if}
 
 <style>
 	.admin-container {
@@ -278,9 +351,14 @@
 		align-items: center;
 	}
 
-	.btn.uploading {
-		opacity: 0.6;
-		cursor: not-allowed;
+	.btn-secondary {
+		background: rgba(15, 33, 67, 0.1);
+		color: var(--primary-color);
+		border: 2px solid var(--primary-color);
+	}
+
+	.btn-secondary:hover {
+		background: rgba(15, 33, 67, 0.2);
 	}
 
 	.message {
@@ -302,15 +380,59 @@
 		border: 1px solid #c3e6cb;
 	}
 
-	.message.info {
-		background: #d1ecf1;
-		color: #0c5460;
-		border: 1px solid #bee5eb;
-	}
-
 	.admin-content {
 		max-width: 1400px;
 		margin: 0 auto;
+	}
+
+	.settings-section,
+	.carousel-section {
+		background: white;
+		padding: 2rem;
+		border-radius: 12px;
+		box-shadow: var(--shadow);
+		margin-bottom: 2rem;
+	}
+
+	.settings-section h2,
+	.carousel-section h2 {
+		color: var(--primary-color);
+		margin: 0 0 1.5rem 0;
+		font-size: 1.75rem;
+	}
+
+	.settings-form {
+		max-width: 500px;
+	}
+
+	.input-with-button {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+	}
+
+	.input-with-button input {
+		flex: 1;
+		padding: 0.75rem;
+		border: 2px solid var(--border-color);
+		border-radius: 8px;
+		font-size: 1rem;
+		font-family: inherit;
+		transition: border-color 0.3s;
+	}
+
+	.input-with-button input:focus {
+		outline: none;
+		border-color: var(--primary-color);
+		box-shadow: 0 0 0 3px rgba(15, 33, 67, 0.1);
+	}
+
+	.help-text-small {
+		display: block;
+		font-size: 0.85rem;
+		color: var(--text-light);
+		font-weight: normal;
+		margin-top: 0.25rem;
 	}
 
 	.help-text {
@@ -319,26 +441,162 @@
 		font-size: 0.95rem;
 	}
 
-	.images-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-		gap: 2rem;
+	.carousel-items {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
 	}
 
-	.image-card {
-		background: white;
-		border-radius: 12px;
-		box-shadow: var(--shadow);
+	.carousel-item-card {
+		display: flex;
+		align-items: center;
+		gap: 1.5rem;
+		padding: 1rem;
+		background: var(--bg-light);
+		border-radius: 8px;
+		border: 2px solid var(--border-color);
+	}
+
+	.item-preview {
+		position: relative;
+		width: 120px;
+		height: 80px;
+		border-radius: 8px;
 		overflow: hidden;
-		transition: transform 0.3s, box-shadow 0.3s;
+		flex-shrink: 0;
 	}
 
-	.image-card:hover {
+	.item-preview img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.item-order {
+		position: absolute;
+		top: 0.5rem;
+		right: 0.5rem;
+		background: rgba(0, 0, 0, 0.7);
+		color: white;
+		padding: 0.25rem 0.5rem;
+		border-radius: 4px;
+		font-size: 0.75rem;
+		font-weight: 600;
+	}
+
+	.item-info {
+		flex: 1;
+	}
+
+	.item-alt {
+		margin: 0;
+		font-weight: 600;
+		color: var(--text-color);
+	}
+
+	.item-actions {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	/* Modal Styles */
+	.modal-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.7);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 1000;
+		padding: 2rem;
+		backdrop-filter: blur(4px);
+	}
+
+	.modal-content {
+		background: white;
+		border-radius: 16px;
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+		max-width: 900px;
+		width: 100%;
+		max-height: 90vh;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+	}
+
+	.modal-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1.5rem 2rem;
+		border-bottom: 2px solid var(--border-color);
+	}
+
+	.modal-header h2 {
+		margin: 0;
+		color: var(--primary-color);
+		font-size: 1.75rem;
+	}
+
+	.modal-close {
+		background: none;
+		border: none;
+		font-size: 2rem;
+		color: var(--text-light);
+		cursor: pointer;
+		padding: 0;
+		width: 2rem;
+		height: 2rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		transition: all 0.3s;
+	}
+
+	.modal-close:hover {
+		background: var(--bg-light);
+		color: var(--text-color);
+	}
+
+	.modal-body {
+		padding: 2rem;
+		overflow-y: auto;
+		flex: 1;
+	}
+
+	.modal-library-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+		gap: 1.5rem;
+	}
+
+	.modal-library-item {
+		cursor: pointer;
+		background: white;
+		border-radius: 8px;
+		overflow: hidden;
+		transition: all 0.3s;
+		border: 3px solid transparent;
+		width: 100%;
+		padding: 0;
+		text-align: left;
+	}
+
+	.modal-library-item:hover {
 		transform: translateY(-4px);
 		box-shadow: var(--shadow-lg);
 	}
 
-	.image-preview {
+	.modal-library-item.selected {
+		border-color: var(--primary-color);
+		box-shadow: 0 0 0 3px rgba(15, 33, 67, 0.1);
+	}
+
+	.modal-library-preview {
 		position: relative;
 		width: 100%;
 		aspect-ratio: 16 / 10;
@@ -346,59 +604,61 @@
 		background: var(--bg-light);
 	}
 
-	.image-preview img {
+	.modal-library-preview img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
 	}
 
-	.image-overlay {
+	.modal-selected-badge {
 		position: absolute;
-		top: 0.5rem;
-		right: 0.5rem;
-		background: rgba(0, 0, 0, 0.7);
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background: var(--primary-color);
 		color: white;
-		padding: 0.25rem 0.75rem;
-		border-radius: 20px;
+		padding: 0.5rem;
+		text-align: center;
 		font-size: 0.875rem;
 		font-weight: 600;
 	}
 
-	.image-controls {
-		padding: 1.5rem;
-	}
-
-	.control-group {
-		margin-bottom: 1rem;
-	}
-
-	.control-group label {
-		display: block;
-		margin-bottom: 0.5rem;
-		font-weight: 600;
-		color: var(--text-color);
-		font-size: 0.9rem;
-	}
-
-	.control-group input {
-		width: 100%;
+	.modal-library-info {
 		padding: 0.75rem;
-		border: 2px solid var(--border-color);
-		border-radius: 8px;
-		font-size: 0.95rem;
-		font-family: inherit;
-		transition: border-color 0.3s;
 	}
 
-	.control-group input:focus {
-		outline: none;
-		border-color: var(--primary-color);
-		box-shadow: 0 0 0 3px rgba(15, 33, 67, 0.1);
+	.modal-library-alt {
+		margin: 0;
+		font-size: 0.875rem;
+		color: var(--text-color);
+		text-align: center;
 	}
 
-	.button-group {
+	.modal-empty-state {
+		text-align: center;
+		padding: 3rem 2rem;
+		color: var(--text-light);
+	}
+
+	.modal-empty-state p {
+		margin: 0.5rem 0;
+	}
+
+	.modal-empty-state a {
+		color: var(--primary-color);
+		text-decoration: none;
+		font-weight: 600;
+	}
+
+	.modal-empty-state a:hover {
+		text-decoration: underline;
+	}
+
+	.modal-footer {
+		padding: 1.5rem 2rem;
+		border-top: 2px solid var(--border-color);
 		display: flex;
-		gap: 0.5rem;
+		justify-content: flex-end;
 	}
 
 	.btn-small {
@@ -438,14 +698,23 @@
 	}
 
 	.empty-state {
-		grid-column: 1 / -1;
 		text-align: center;
-		padding: 4rem 2rem;
+		padding: 3rem 2rem;
 		color: var(--text-light);
 	}
 
 	.empty-state p {
 		margin: 0.5rem 0;
+	}
+
+	.modal-empty-state a {
+		color: var(--primary-color);
+		text-decoration: none;
+		font-weight: 600;
+	}
+
+	.modal-empty-state a:hover {
+		text-decoration: underline;
 	}
 
 	.loading {
@@ -465,9 +734,25 @@
 			align-items: flex-start;
 		}
 
-		.images-grid {
-			grid-template-columns: 1fr;
+		.carousel-item-card {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.item-actions {
+			justify-content: center;
+		}
+
+		.modal-overlay {
+			padding: 1rem;
+		}
+
+		.modal-content {
+			max-height: 95vh;
+		}
+
+		.modal-library-grid {
+			grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 		}
 	}
 </style>
-

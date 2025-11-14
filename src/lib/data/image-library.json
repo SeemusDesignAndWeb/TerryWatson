@@ -1,0 +1,21 @@
+[
+  {
+    "id": "1",
+    "src": "/images/terryandfranwatson_beach.png",
+    "alt": "Terry & Fran Watson",
+    "uploadedAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "src": "/images/terryandfranwatson_500.png",
+    "alt": "Terry & Fran Watson",
+    "uploadedAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "src": "/images/terryandfranwatson_earlyyears.png",
+    "alt": "Terry & Fran Watson",
+    "uploadedAt": "2025-01-01T00:00:00.000Z"
+  }
+]
+

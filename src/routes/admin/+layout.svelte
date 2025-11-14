@@ -10,7 +10,8 @@
 
 	const navItems = [
 		{ href: '/admin', label: 'Dashboard' },
-		{ href: '/admin/carousel', label: 'Carousel Images' },
+		{ href: '/admin/images', label: 'Image Library' },
+		{ href: '/admin/carousel', label: 'Carousel' },
 		{ href: '/admin/episodes', label: 'Audio Episodes' },
 		{ href: '/admin/news', label: 'News Updates' },
 		{ href: '/admin/ameva', label: 'Ameva Page' },
